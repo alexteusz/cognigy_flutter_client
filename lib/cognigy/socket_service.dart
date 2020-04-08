@@ -13,7 +13,7 @@ class SocketService {
 
     if (connected) {
       socket.emit('processInput', {
-        'URLToken': '849de509618869b1cf5d14855354b7b81ceb43bd5f5d4a6e72080ddaed9bc3ea',
+        'URLToken': config.urlToken,
         'text': text,
         'userId': userId,
         'sessionId': sessionId,
