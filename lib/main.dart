@@ -56,7 +56,6 @@ class _ChatPageState extends State<ChatPage> {
     socketService.createSocketConnection();
 
     socketService.socket.on('output', (jsonData) {
-
       this.setState(() => messages.add({
             'message': jsonData['data']['text'],
             'data': jsonData['data']['data'],
@@ -96,21 +95,6 @@ class _ChatPageState extends State<ChatPage> {
               color: sender == 'bot' ? Colors.white : Colors.grey[900],
               fontSize: 15.0),
         ),
-      ),
-    );
-  }
-
-  Widget buildMessageList() {
-    return Container(
-      constraints: BoxConstraints(minWidth: width, minHeight: height * 0.8),
-      height: height * 0.8,
-      width: width,
-      child: ListView.builder(
-        controller: scrollController,
-        itemCount: messages.length,
-        itemBuilder: (BuildContext context, int index) {
-          return buildSingleMessage(index);
-        },
       ),
     );
   }
@@ -225,15 +209,23 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Image(image: AssetImage('assets/images/logo.png'),width: 200,),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            buildMessageList(),
-            buildInputArea(),
-          ],
+        title: Image(
+          image: AssetImage('assets/images/logo.png'),
+          width: 200,
         ),
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+              child: ListView.builder(
+            controller: scrollController,
+            itemCount: messages.length,
+            itemBuilder: (BuildContext context, int index) {
+              return buildSingleMessage(index);
+            },
+          )),
+          buildInputArea()
+        ],
       ),
     );
   }
