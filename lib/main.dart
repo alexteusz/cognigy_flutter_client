@@ -83,7 +83,7 @@ class _ChatPageState extends State<ChatPage> {
       alignment: sender == 'bot' ? Alignment.centerLeft : Alignment.centerRight,
       child: Container(
         padding: const EdgeInsets.all(20.0),
-        margin: const EdgeInsets.only(bottom: 20.0, left: 20.0, right: 20.0),
+        margin: const EdgeInsets.only(top: 10, bottom: 10.0, left: 20.0, right: 20.0),
         decoration: BoxDecoration(
           color: sender == 'bot' ? Colors.grey[600] : Colors.grey[200],
           border: null,
