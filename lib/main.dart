@@ -118,6 +118,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget buildChatInput() {
     return Container(
       width: width * 0.7,
+      constraints: BoxConstraints(minWidth: width * 0.7),
       padding: const EdgeInsets.all(2.0),
       margin: const EdgeInsets.only(left: 40.0),
       child: TextField(
@@ -192,7 +193,8 @@ class _ChatPageState extends State<ChatPage> {
   Widget buildInputArea() {
     return Container(
       height: height * 0.1,
-      //width: width,
+      width: width,
+      constraints: BoxConstraints(minWidth: width, minHeight: height * 0.1),
       decoration: new BoxDecoration(
         color: Colors.white,
         boxShadow: [
