@@ -20,6 +20,12 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Required packages for Socket.IO connection
+  socket_io_client: ^0.9.4
+  flutter_simple_dependency_injection: ^1.0.1
+  # SessionId for Cognigy.AI
+  uuid: ^2.0.4
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
