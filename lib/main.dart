@@ -25,21 +25,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Cognigy Demo'),
+      home: ChatPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
+class ChatPage extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _ChatPageState createState() => _ChatPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ChatPageState extends State<ChatPage> {
   List messages;
   double height, width;
   TextEditingController textController;
@@ -56,11 +52,12 @@ class _MyHomePageState extends State<MyHomePage> {
     textController = TextEditingController();
     scrollController = ScrollController();
 
-    // Connect to Cognigy.AI Socket.IO Endpoint
     socketService.createSocketConnection();
 
     socketService.socket.on('output', (jsonData) {
       //Convert the JSON data received into a Map
+
+      print(jsonData);
 
       this.setState(() => messages.add({
             'message': jsonData['data']['text'],
@@ -75,23 +72,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     super.initState();
-  }
-
-  void _sendMessage() {
-    //Check if the textfield has text or not
-    if (textController.text.isNotEmpty) {
-      socketService.sendMessage(textController.text);
-
-      this.setState(() => messages
-          .add({'message': textController.text, 'data': {}, 'sender': 'user'}));
-      textController.text = '';
-      //Scrolldown the list to show the latest message
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 600),
-        curve: Curves.ease,
-      );
-    }
   }
 
   Widget buildSingleMessage(int index) {
@@ -138,21 +118,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget buildChatInput() {
     return Container(
-      decoration: new BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            blurRadius: 5.0, // has the effect of softening the shadow
-            spreadRadius: 5.0, // has the effect of extending the shadow
-            offset: Offset(
-              10.0, // horizontal, move right 10
-              10.0, // vertical, move down 10
-            ),
-          )
-        ],
-      ),
-      padding: const EdgeInsets.only(top: 2.0, left: 40),
+      width: width * 0.7,
+      padding: const EdgeInsets.all(2.0),
+      margin: const EdgeInsets.only(left: 40.0),
       child: TextField(
         keyboardType: TextInputType.text,
         textInputAction: TextInputAction.send,
@@ -191,29 +159,78 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Widget buildSendButton() {
+    return FloatingActionButton(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      focusElevation: 0,
+      hoverElevation: 0,
+      highlightElevation: 0,
+      onPressed: () {
+        //Check if the textfield has text or not
+        if (textController.text.isNotEmpty) {
+          socketService.sendMessage(textController.text);
+
+          this.setState(() => messages.add(
+              {'message': textController.text, 'data': {}, 'sender': 'user'}));
+          textController.text = '';
+          //Scrolldown the list to show the latest message
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 600),
+            curve: Curves.ease,
+          );
+        }
+      },
+      child: Icon(
+        Icons.send,
+        size: 30,
+        color: textController.text == '' ? Colors.black12 : Colors.black45,
+      ),
+    );
+  }
+
+  Widget buildInputArea() {
+    return Container(
+      height: height * 0.1,
+      width: width,
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black,
+            blurRadius: 5.0, // has the effect of softening the shadow
+            spreadRadius: 5.0, // has the effect of extending the shadow
+            offset: Offset(
+              10.0, // horizontal, move right 10
+              10.0, // vertical, move down 10
+            ),
+          )
+        ],
+      ),
+      child: Row(
+        children: <Widget>[
+          buildChatInput(),
+          buildSendButton(),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             SizedBox(height: height * 0.1),
             buildMessageList(),
-            buildChatInput(),
+            buildInputArea(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _sendMessage,
-        tooltip: 'Send Message',
-        child: Icon(Icons.send),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
