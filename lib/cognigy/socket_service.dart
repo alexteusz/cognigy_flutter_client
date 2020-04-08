@@ -27,7 +27,8 @@ class SocketService {
   }
 
   createSocketConnection() {
-    print('calling socket service');
+    print("[SocketClient] try to connect to Cognigy.AI");
+
     socket = IO.io(config.socketUrl, <String, dynamic>{
       'transports': ['websocket'],
       'extraHeaders': {
