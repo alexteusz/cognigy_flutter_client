@@ -56,9 +56,6 @@ class _ChatPageState extends State<ChatPage> {
     socketService.createSocketConnection();
 
     socketService.socket.on('output', (jsonData) {
-      //Convert the JSON data received into a Map
-
-      print(jsonData);
 
       this.setState(() => messages.add({
             'message': jsonData['data']['text'],
@@ -105,6 +102,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildMessageList() {
     return Container(
+      constraints: BoxConstraints(minWidth: width, minHeight: height * 0.8),
       height: height * 0.8,
       width: width,
       child: ListView.builder(
@@ -194,7 +192,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget buildInputArea() {
     return Container(
       height: height * 0.1,
-      width: width,
+      //width: width,
       decoration: new BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -223,10 +221,13 @@ class _ChatPageState extends State<ChatPage> {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Image(image: AssetImage('assets/images/logo.png'),width: 200,),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            SizedBox(height: height * 0.1),
             buildMessageList(),
             buildInputArea(),
           ],
