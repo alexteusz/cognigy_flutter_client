@@ -45,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
   double height, width;
   TextEditingController textController;
   ScrollController scrollController;
-  CognigyMessage cognigyMessage;
+  Message cognigyMessage;
 
   final SocketService socketService = injector.get<SocketService>();
 
@@ -133,7 +133,7 @@ class _ChatPageState extends State<ChatPage> {
 
             this.setState(() => messages.add({
                   'message':
-                      new CognigyMessage('text', textController.text, null),
+                      new Message('text', textController.text, null),
                   'sender': 'user'
                 }));
             textController.text = '';
@@ -167,7 +167,7 @@ class _ChatPageState extends State<ChatPage> {
 
           this.setState(() => messages.add({
                 'message':
-                    new CognigyMessage('text', textController.text, null),
+                    new Message('text', textController.text, null),
                 'sender': 'user'
               }));
 
@@ -248,7 +248,7 @@ class _ChatPageState extends State<ChatPage> {
     Widget messageWidget;
     String sender = messages[index]['sender'];
 
-    CognigyMessage message = messages[index]['message'];
+    Message message = messages[index]['message'];
 
     switch (message.type) {
       case 'text':

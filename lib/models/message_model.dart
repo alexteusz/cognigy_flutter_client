@@ -1,7 +1,7 @@
-class CognigyMessage {
+class Message {
   final String type;
   final String text;
   final dynamic data;
 
-  CognigyMessage(this.type, this.text, this.data);
+  Message(this.type, this.text, this.data);
 }
