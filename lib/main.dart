@@ -214,6 +214,10 @@ class _ChatPageState extends State<ChatPage> {
       case 'quick_replies':
         messageWidget = quickRepliesMessage(
             index, message.data, message.text, socketService, messageProvider);
+        break;
+      case 'image_attachment':
+        messageWidget = imageMessage(index, message.text);
+        break;
     }
     return messageWidget;
   }

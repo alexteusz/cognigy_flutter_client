@@ -75,3 +75,14 @@ Widget quickRepliesMessage(int index, quickReplies, String text, SocketService s
     ),
   );
 }
+
+Widget imageMessage(int index, String url) {
+   return Container(
+    alignment: Alignment.centerLeft,
+    child: Container(
+      margin: const EdgeInsets.only(
+          top: 10, bottom: 10.0, left: 20.0, right: 50.0),
+      child: ClipRRect(child: Image.network(url), borderRadius: BorderRadius.circular(10.0),)
+    ),
+  );
+}
