@@ -1,6 +1,7 @@
 //import 'package:cognigy_flutter_client/widgets/message.dart';
 import 'package:cognigy_flutter_client/helper/message_helper.dart';
 import 'package:cognigy_flutter_client/models/message_model.dart';
+import 'package:cognigy_flutter_client/providers/message_provider.dart';
 import 'package:cognigy_flutter_client/widgets/messages.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ import 'package:flutter_simple_dependency_injection/injector.dart';
 import 'package:cognigy_flutter_client/cognigy/app_initializer.dart';
 import 'package:cognigy_flutter_client/cognigy/dependency_injection.dart';
 import 'package:cognigy_flutter_client/cognigy/socket_service.dart';
+import 'package:provider/provider.dart';
 
 // Create Injector
 Injector injector;
@@ -17,7 +19,9 @@ void main() async {
   DependencyInjection().initialise(Injector.getInjector());
   injector = Injector.getInjector();
   await AppInitializer().initialise(injector);
-  runApp(MyApp());
+  // Run App with Provider
+  runApp(ChangeNotifierProvider<MessageProvider>(
+      create: (_) => MessageProvider(), child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -41,75 +45,29 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  List messages;
   double height, width;
   TextEditingController textController;
   ScrollController scrollController;
-  Message cognigyMessage;
+  //Message cognigyMessage;
 
   final SocketService socketService = injector.get<SocketService>();
 
+  MessageProvider messageProvider;
+
   @override
   void initState() {
-    //Initializing the message list
-    messages = List();
+    super.initState();
+    
+    //MessageProvider msgProvider = new MessageProvider();
 
     //Initializing the TextEditingController and ScrollController
     textController = TextEditingController();
     scrollController = ScrollController();
 
     socketService.createSocketConnection();
-
-    socketService.socket.on('output', (cognigyResponse) {
-      //print('COGNIGY: $cognigyResponse');
-      // process the cognigy output message
-      cognigyMessage = processCognigyMessage(cognigyResponse);
-
-      if (cognigyMessage != null) {
-        this.setState(
-            () => messages.add({'message': cognigyMessage, 'sender': 'bot'}));
-      }
-
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 600),
-        curve: Curves.ease,
-      );
-    });
-
-    super.initState();
   }
 
-  Widget buildSingleMessage(int index) {
-    //print('Message: ${messages[index]}');
-
-    var sender = messages[index]['sender'];
-    var message = messages[index]['message'];
-
-    if (message == null) return Container();
-
-    return Container(
-      alignment: sender == 'bot' ? Alignment.centerLeft : Alignment.centerRight,
-      child: Container(
-        padding: const EdgeInsets.all(20.0),
-        margin: const EdgeInsets.only(
-            top: 10, bottom: 10.0, left: 20.0, right: 20.0),
-        decoration: BoxDecoration(
-          color: sender == 'bot' ? Colors.grey[600] : Colors.grey[200],
-          border: null,
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        child: Text(
-          message,
-          style: TextStyle(
-              color: sender == 'bot' ? Colors.white : Colors.grey[900],
-              fontSize: 15.0),
-        ),
-      ),
-    );
-  }
-
-  Widget buildChatInput() {
+  Widget buildChatInput(MessageProvider messageProvider) {
     return Container(
       width: width * 0.7,
       constraints: BoxConstraints(minWidth: width * 0.7),
@@ -131,11 +89,9 @@ class _ChatPageState extends State<ChatPage> {
           if (textController.text.isNotEmpty) {
             socketService.sendMessage(textController.text);
 
-            this.setState(() => messages.add({
-                  'message':
-                      new Message('text', textController.text, null),
-                  'sender': 'user'
-                }));
+            messageProvider.addMessage(
+                new Message('text', textController.text, null), 'user');
+
             textController.text = '';
             //Scrolldown the list to show the latest message
             scrollController.animateTo(
@@ -153,7 +109,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget buildSendButton() {
+  Widget buildSendButton(MessageProvider messageProvider) {
     return FloatingActionButton(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -165,11 +121,8 @@ class _ChatPageState extends State<ChatPage> {
         if (textController.text.isNotEmpty) {
           socketService.sendMessage(textController.text);
 
-          this.setState(() => messages.add({
-                'message':
-                    new Message('text', textController.text, null),
-                'sender': 'user'
-              }));
+          messageProvider.addMessage(
+              new Message('text', textController.text, null), 'user');
 
           textController.text = '';
           //Scrolldown the list to show the latest message
@@ -188,7 +141,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget buildInputArea() {
+  Widget buildInputArea(MessageProvider messageProvider) {
     return Container(
       height: height * 0.1,
       width: width,
@@ -209,8 +162,8 @@ class _ChatPageState extends State<ChatPage> {
       ),
       child: Row(
         children: <Widget>[
-          buildChatInput(),
-          buildSendButton(),
+          buildChatInput(messageProvider),
+          buildSendButton(messageProvider),
         ],
       ),
     );
@@ -220,34 +173,38 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Image(
-          image: AssetImage('assets/images/logo.png'),
-          width: 200,
+    return Consumer<MessageProvider>(builder: (context, messageProvider, child) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: Image(
+            image: AssetImage('assets/images/logo.png'),
+            width: 200,
+          ),
         ),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-              child: ListView.builder(
-            controller: scrollController,
-            itemCount: messages.length,
-            itemBuilder: (BuildContext context, int index) {
-              return buildMessage(index);
-            },
-          )),
-          buildInputArea()
-        ],
-      ),
-    );
+        body: Column(
+          children: <Widget>[
+            Expanded(
+                child: ListView.builder(
+              controller: scrollController,
+              itemCount: messageProvider.getLength,
+              itemBuilder: (BuildContext context, int index) {
+                return buildMessage(index, messageProvider);
+              },
+            )),
+            buildInputArea(messageProvider)
+          ],
+        ),
+      );
+    });
   }
 
-  Widget buildMessage(int index) {
+  Widget buildMessage(int index, MessageProvider messageProvider) {
     Widget messageWidget;
-    String sender = messages[index]['sender'];
 
+    List messages = messageProvider.getMessages;
+
+    String sender = messages[index]['sender'];
     Message message = messages[index]['message'];
 
     switch (message.type) {
@@ -255,7 +212,8 @@ class _ChatPageState extends State<ChatPage> {
         messageWidget = textMessage(index, sender, message.text);
         break;
       case 'quick_replies':
-        messageWidget = quickRepliesMessage(index, message.data, message.text);
+        messageWidget = quickRepliesMessage(
+            index, message.data, message.text, socketService, messageProvider);
     }
     return messageWidget;
   }

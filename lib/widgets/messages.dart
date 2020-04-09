@@ -1,3 +1,6 @@
+import 'package:cognigy_flutter_client/cognigy/socket_service.dart';
+import 'package:cognigy_flutter_client/models/message_model.dart';
+import 'package:cognigy_flutter_client/providers/message_provider.dart';
 import 'package:flutter/material.dart';
 
 Widget textMessage(int index, String sender, String text) {
@@ -24,7 +27,7 @@ Widget textMessage(int index, String sender, String text) {
   );
 }
 
-Widget quickRepliesMessage(int index, quickReplies, String text) {
+Widget quickRepliesMessage(int index, quickReplies, String text, SocketService socketService, MessageProvider messageProvider) {
 
   List<Widget> quickReplyWidgets = List<Widget>();
   // build quick replies
@@ -33,11 +36,13 @@ Widget quickRepliesMessage(int index, quickReplies, String text) {
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: OutlineButton(
-          
           shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
           padding: EdgeInsets.all(10.0),
           child: Text(qr['title']),
-          onPressed: () {},
+          onPressed: () {
+            socketService.sendMessage(qr['payload']);
+            messageProvider.addMessage(new Message('text', qr['title'], null), 'user');
+          },
         ),
       )
     );
