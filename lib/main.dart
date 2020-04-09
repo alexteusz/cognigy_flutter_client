@@ -1,3 +1,7 @@
+//import 'package:cognigy_flutter_client/widgets/message.dart';
+import 'package:cognigy_flutter_client/helper/message_helper.dart';
+import 'package:cognigy_flutter_client/models/message_model.dart';
+import 'package:cognigy_flutter_client/widgets/messages.dart';
 import 'package:flutter/material.dart';
 
 // Import required files for Cognigy.AI connection
@@ -41,6 +45,7 @@ class _ChatPageState extends State<ChatPage> {
   double height, width;
   TextEditingController textController;
   ScrollController scrollController;
+  CognigyMessage cognigyMessage;
 
   final SocketService socketService = injector.get<SocketService>();
 
@@ -55,12 +60,16 @@ class _ChatPageState extends State<ChatPage> {
 
     socketService.createSocketConnection();
 
-    socketService.socket.on('output', (jsonData) {
-      this.setState(() => messages.add({
-            'message': jsonData['data']['text'],
-            'data': jsonData['data']['data'],
-            'sender': 'bot'
-          }));
+    socketService.socket.on('output', (cognigyResponse) {
+      //print('COGNIGY: $cognigyResponse');
+      // process the cognigy output message
+      cognigyMessage = processCognigyMessage(cognigyResponse);
+
+      if (cognigyMessage != null) {
+        this.setState(
+            () => messages.add({'message': cognigyMessage, 'sender': 'bot'}));
+      }
+
       scrollController.animateTo(
         scrollController.position.maxScrollExtent,
         duration: Duration(milliseconds: 600),
@@ -83,7 +92,8 @@ class _ChatPageState extends State<ChatPage> {
       alignment: sender == 'bot' ? Alignment.centerLeft : Alignment.centerRight,
       child: Container(
         padding: const EdgeInsets.all(20.0),
-        margin: const EdgeInsets.only(top: 10, bottom: 10.0, left: 20.0, right: 20.0),
+        margin: const EdgeInsets.only(
+            top: 10, bottom: 10.0, left: 20.0, right: 20.0),
         decoration: BoxDecoration(
           color: sender == 'bot' ? Colors.grey[600] : Colors.grey[200],
           border: null,
@@ -122,8 +132,8 @@ class _ChatPageState extends State<ChatPage> {
             socketService.sendMessage(textController.text);
 
             this.setState(() => messages.add({
-                  'message': textController.text,
-                  'data': {},
+                  'message':
+                      new CognigyMessage('text', textController.text, null),
                   'sender': 'user'
                 }));
             textController.text = '';
@@ -155,8 +165,12 @@ class _ChatPageState extends State<ChatPage> {
         if (textController.text.isNotEmpty) {
           socketService.sendMessage(textController.text);
 
-          this.setState(() => messages.add(
-              {'message': textController.text, 'data': {}, 'sender': 'user'}));
+          this.setState(() => messages.add({
+                'message':
+                    new CognigyMessage('text', textController.text, null),
+                'sender': 'user'
+              }));
+
           textController.text = '';
           //Scrolldown the list to show the latest message
           scrollController.animateTo(
@@ -221,12 +235,28 @@ class _ChatPageState extends State<ChatPage> {
             controller: scrollController,
             itemCount: messages.length,
             itemBuilder: (BuildContext context, int index) {
-              return buildSingleMessage(index);
+              return buildMessage(index);
             },
           )),
           buildInputArea()
         ],
       ),
     );
+  }
+
+  Widget buildMessage(int index) {
+    Widget messageWidget;
+    String sender = messages[index]['sender'];
+
+    CognigyMessage message = messages[index]['message'];
+
+    switch (message.type) {
+      case 'text':
+        messageWidget = textMessage(index, sender, message.text);
+        break;
+      case 'quick_replies':
+        messageWidget = quickRepliesMessage(index, message.data, message.text);
+    }
+    return messageWidget;
   }
 }
