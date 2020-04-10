@@ -13,7 +13,6 @@ import 'package:cognigy_flutter_client/cognigy/app_initializer.dart';
 import 'package:cognigy_flutter_client/cognigy/dependency_injection.dart';
 import 'package:cognigy_flutter_client/cognigy/socket_service.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
 
 // Create Injector
 Injector injector;
@@ -52,27 +51,13 @@ class _ChatPageState extends State<ChatPage> {
 
   final SocketService socketService = injector.get<SocketService>();
 
-  VideoPlayerController _videoPlayerController;
-  Future<void> _initializeVideoPlayerFuture;
-
-
   @override
   void initState() {
     super.initState(); 
 
     socketService.createSocketConnection();
-
-    _initializeVideoPlayerFuture = _videoPlayerController.initialize();
-
   }
 
-  @override
-  void dispose() {
-    // Ensure disposing of the VideoPlayerController to free up resources.
-    _videoPlayerController.dispose();
-
-    super.dispose();
-  }
 
   Widget buildChatInput(MessageProvider messageProvider) {
     return Container(
@@ -229,7 +214,6 @@ class _ChatPageState extends State<ChatPage> {
             galleryMessage(index, message.data, socketService, messageProvider);
         break;
       case 'video':
-        messageWidget = videoMessage(index, message.text, _videoPlayerController, _initializeVideoPlayerFuture);
         break;
     }
     return messageWidget;
