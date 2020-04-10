@@ -3,7 +3,6 @@ import 'package:cognigy_flutter_client/models/message_model.dart';
 import 'package:cognigy_flutter_client/providers/message_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:video_player/video_player.dart';
 
 // method to open a url
 _launchUrl(String url) async {
