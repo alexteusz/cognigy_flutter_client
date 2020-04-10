@@ -2,6 +2,16 @@ import 'package:cognigy_flutter_client/cognigy/socket_service.dart';
 import 'package:cognigy_flutter_client/models/message_model.dart';
 import 'package:cognigy_flutter_client/providers/message_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+// method to open a url
+_launchUrl(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 
 Widget textMessage(int index, String sender, String text) {
   if (text == null) return Container();
@@ -91,49 +101,97 @@ Widget imageMessage(int index, String url) {
 
 Widget galleryMessage(int index, List elements, SocketService socketService,
     MessageProvider messageProvider) {
-  List<Widget> galleryElementWidgets = List<Widget>();
-  // build gallery elements
-  for (var ge in elements) {
-    galleryElementWidgets.add(Flexible(
-          child: Card(
-          color: Colors.white,
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 250.0,
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                      child: Image.network(ge['image_url'], fit: BoxFit.cover)),
-                  Positioned(
-                    bottom: 16.0,
-                    left: 16.0,
-                    right: 16.0,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        ge['title'],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-                )
-            ],
-          )),
-    ));
+  List<Widget> galleryButtons = List<Widget>();
+  // build gallery buttons
+  for (var e in elements) {
+    for (var b in e['buttons'])
+      galleryButtons.add(FlatButton(
+        child: Text(b['title'].toUpperCase(), style: TextStyle(color: Colors.black),),
+        onPressed: () {
+          switch (b['type']) {
+            case 'postback':
+              messageProvider.socketService.sendMessage(b['payload']);
+              messageProvider.addMessage(
+              new Message('text', b['title'], null), 'user');
+              break;
+            case 'web_url':
+              _launchUrl(b['url']);
+          }
+        },
+      ));
   }
+
 
   return Container(
       alignment: Alignment.centerLeft,
       margin: EdgeInsets.symmetric(vertical: 20.0),
-      height: 250,
-      color: Colors.grey,
-      //child: Text('hallo'));
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(children: galleryElementWidgets),
-      ));
+      height: 330,
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: elements.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              width: MediaQuery.of(context).size.width,
+              child: Card(
+                  color: Colors.white,
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 250.0,
+                        child: Stack(
+                          children: <Widget>[
+                            Positioned.fill(
+                                child: Container(
+                              color: Colors.black,
+                              child: Opacity(
+                                opacity: 0.5,
+                                child: Image.network(
+                                    elements[index]['image_url'],
+                                    fit: BoxFit.cover),
+                              ),
+                            )),
+                            Positioned(
+                              bottom: 0.0,
+                              left: 16.0,
+                              right: 16.0,
+                              child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        elements[index]['title'],
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 20),
+                                      ),
+                                      Text(
+                                        elements[index]['subtitle'],
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15),
+                                      )
+                                    ],
+                                  )),
+                            )
+                          ],
+                        ),
+                      ),
+                      ButtonBarTheme(
+                        data: ButtonBarThemeData(),
+                        child: ButtonBar(
+                          buttonPadding: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: MainAxisAlignment.end,
+                          children: galleryButtons,
+                        ),
+                      )
+                    ],
+                  )),
+            );
+          }));
 }
