@@ -5,7 +5,6 @@ import 'package:cognigy_flutter_client/models/message_model.dart';
 import 'package:flutter/material.dart';
 
 class MessageProvider extends ChangeNotifier {
-  
   SocketService socketService = injector.get<SocketService>();
   Message cognigyMessage;
   List _messages = List();
@@ -15,18 +14,21 @@ class MessageProvider extends ChangeNotifier {
   String _urlToken;
 
   MessageProvider() {
-
     socketService.socket.on('output', (cognigyResponse) {
-
       // process the cognigy output message
       cognigyMessage = processCognigyMessage(cognigyResponse);
 
       if (cognigyMessage != null) {
-
         addMessage(cognigyMessage, 'bot');
+
+        //Scrolldown the list to show the latest message
+        getScrollController.animateTo(
+          getScrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 600),
+          curve: Curves.ease,
+        );
       }
     });
-
   }
 
   void addMessage(Message message, String sender) {
