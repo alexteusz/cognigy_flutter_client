@@ -17,7 +17,7 @@ class MessageProvider extends ChangeNotifier {
   MessageProvider() {
 
     socketService.socket.on('output', (cognigyResponse) {
-      //print('COGNIGY: $cognigyResponse');
+
       // process the cognigy output message
       cognigyMessage = processCognigyMessage(cognigyResponse);
 
