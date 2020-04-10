@@ -21,10 +21,17 @@ Message processCognigyMessage(dynamic cognigyResponse) {
     }
 
     // check for image
-    if (cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment'] != null) {
+    if (cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['type'] == 'image') {
       String url = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['url'];
 
       return new Message('image_attachment', url, null);
+    }
+
+    // check for gallery
+    if (cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['type'] == 'template') {
+      List galleryItems = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['elements'];
+
+      return new Message('gallery', '', galleryItems);
     }
   }
 }
