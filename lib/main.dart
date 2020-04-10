@@ -3,7 +3,6 @@ import 'package:cognigy_flutter_client/helper/message_helper.dart';
 import 'package:cognigy_flutter_client/models/message_model.dart';
 import 'package:cognigy_flutter_client/providers/message_provider.dart';
 import 'package:cognigy_flutter_client/widgets/main_appBar.dart';
-import 'package:cognigy_flutter_client/widgets/main_drawer.dart';
 import 'package:cognigy_flutter_client/widgets/messages.dart';
 import 'package:flutter/material.dart';
 
@@ -171,7 +170,6 @@ class _ChatPageState extends State<ChatPage> {
     return Consumer<MessageProvider>(
         builder: (context, messageProvider, child) {
       return Scaffold(
-        drawer: MainDrawer(),
         appBar: MainAppBar(),
         body: Column(
           children: <Widget>[

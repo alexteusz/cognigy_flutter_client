@@ -1,3 +1,4 @@
+import 'package:cognigy_flutter_client/widgets/configuration_dialog.dart';
 import 'package:flutter/material.dart';
 
 class MainAppBar extends StatelessWidget with PreferredSizeWidget {
@@ -5,17 +6,20 @@ class MainAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
+      _configurationDialog(BuildContext context) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return ConfigurationDialog();
+          });
+    }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
-          leading: Builder(
-        builder: (BuildContext context) {
-          return IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black,),
-            onPressed: () { Scaffold.of(context).openDrawer(); },
-            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-          );
-        },
+          leading: IconButton(
+            icon: const Icon(Icons.settings, color: Colors.black,),
+            onPressed: () => _configurationDialog(context),
       ),
           backgroundColor: Colors.white,
           title: Image(
