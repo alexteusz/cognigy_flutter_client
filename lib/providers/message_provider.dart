@@ -10,6 +10,7 @@ class MessageProvider extends ChangeNotifier {
   Message cognigyMessage;
   List _messages = List();
   TextEditingController _textController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
 
   MessageProvider() {
 
@@ -48,4 +49,6 @@ class MessageProvider extends ChangeNotifier {
   String get getUserInputText => _textController.text;
 
   TextEditingController get getUserInputTextController => _textController;
+
+  ScrollController get getScrollController => _scrollController;
 }

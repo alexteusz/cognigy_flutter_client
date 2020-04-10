@@ -48,16 +48,13 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   double height, width;
-  ScrollController scrollController;
 
   final SocketService socketService = injector.get<SocketService>();
 
 
   @override
   void initState() {
-    super.initState();
-
-    scrollController = ScrollController();
+    super.initState(); 
 
     socketService.createSocketConnection();
   }
@@ -91,8 +88,8 @@ class _ChatPageState extends State<ChatPage> {
             //textController.text = '';
             messageProvider.setUserInputText('');
             //Scrolldown the list to show the latest message
-            scrollController.animateTo(
-              scrollController.position.maxScrollExtent,
+            messageProvider.getScrollController.animateTo(
+              messageProvider.getScrollController.position.maxScrollExtent,
               duration: Duration(milliseconds: 600),
               curve: Curves.ease,
             );
@@ -124,8 +121,8 @@ class _ChatPageState extends State<ChatPage> {
           //textController.text = '';
           messageProvider.setUserInputText('');
           //Scrolldown the list to show the latest message
-          scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
+          messageProvider.getScrollController.animateTo(
+            messageProvider.getScrollController.position.maxScrollExtent,
             duration: Duration(milliseconds: 600),
             curve: Curves.ease,
           );
@@ -180,7 +177,7 @@ class _ChatPageState extends State<ChatPage> {
           children: <Widget>[
             Expanded(
                 child: ListView.builder(
-              controller: scrollController,
+              controller: messageProvider.getScrollController,
               itemCount: messageProvider.getLength,
               itemBuilder: (BuildContext context, int index) {
                 return buildMessage(index, messageProvider);
