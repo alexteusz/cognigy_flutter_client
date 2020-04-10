@@ -33,5 +33,11 @@ Message processCognigyMessage(dynamic cognigyResponse) {
 
       return new Message('gallery', '', galleryItems);
     }
+
+    if (cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['type'] == 'video') {
+      String url = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['url'];
+
+      return new Message('video', url, null);
+    }
   }
 }

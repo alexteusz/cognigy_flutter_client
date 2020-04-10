@@ -3,6 +3,7 @@ import 'package:cognigy_flutter_client/models/message_model.dart';
 import 'package:cognigy_flutter_client/providers/message_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 
 // method to open a url
 _launchUrl(String url) async {
@@ -194,4 +195,37 @@ Widget galleryMessage(int index, List elements, SocketService socketService,
                   )),
             );
           }));
+}
+
+Widget videoMessage(int index, String url, VideoPlayerController videoPlayerController, Future<void> initializeVideoPlayerFuture) {
+  
+  videoPlayerController = VideoPlayerController.network(url);
+  
+  return Container(
+    alignment: Alignment.centerLeft,
+    child: Container(
+        margin: const EdgeInsets.only(
+            top: 10, bottom: 10.0, left: 20.0, right: 50.0),
+        child: ClipRRect(
+          child: FutureBuilder(
+            future: initializeVideoPlayerFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                // If the VideoPlayerController has finished initialization, use
+                // the data it provides to limit the aspect ratio of the VideoPlayer.
+                return AspectRatio(
+                  aspectRatio: videoPlayerController.value.aspectRatio,
+                  // Use the VideoPlayer widget to display the video.
+                  child: VideoPlayer(videoPlayerController),
+                );
+              } else {
+                // If the VideoPlayerController is still initializing, show a
+                // loading spinner.
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          )
+        ),
+    )
+  );
 }
