@@ -1,8 +1,13 @@
+import 'package:cognigy_flutter_client/providers/message_provider.dart';
 import 'package:flutter/material.dart';
 
 class ConfigurationDialog extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
+
+    MessageProvider messageProvider = new MessageProvider();
+
     return Center(
       child: Dialog(
           elevation: 0,
@@ -25,6 +30,7 @@ class ConfigurationDialog extends StatelessWidget {
                 ),
                 SizedBox(height: 30.0),
                 TextField(
+                  onChanged: (value) => messageProvider.setSocketUrl(value),
                   decoration: InputDecoration(
                       labelText: 'Endpoint URL',
                       labelStyle: TextStyle(color: Colors.black),
@@ -40,6 +46,7 @@ class ConfigurationDialog extends StatelessWidget {
                 ),
                 SizedBox(height: 20.0),
                 TextField(
+                  onChanged: (value) => messageProvider.setURLToken(value),
                   decoration: InputDecoration(
                       labelText: 'URL Token',
                       labelStyle: TextStyle(color: Colors.black),
@@ -65,6 +72,11 @@ class ConfigurationDialog extends StatelessWidget {
                         color: Colors.blue,
                         colorBrightness: Brightness.light,
                         onPressed: () {
+                          String socketUrl = messageProvider.getSocketUrl;
+                          String urlToken = messageProvider.getUrlToken;
+                          
+                          messageProvider.setSocketUrl(socketUrl);
+                          messageProvider.setURLToken(urlToken);
                           Navigator.pop(context);
                         },
                         shape: RoundedRectangleBorder(
