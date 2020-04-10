@@ -34,4 +34,9 @@ class MessageProvider extends ChangeNotifier {
   List get getMessages => _messages;
 
   int get getLength => _messages.length;
+
+  void deleteMessages() {
+    _messages.clear();
+    notifyListeners();
+  }
 }

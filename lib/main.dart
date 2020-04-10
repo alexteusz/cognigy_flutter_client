@@ -2,6 +2,8 @@
 import 'package:cognigy_flutter_client/helper/message_helper.dart';
 import 'package:cognigy_flutter_client/models/message_model.dart';
 import 'package:cognigy_flutter_client/providers/message_provider.dart';
+import 'package:cognigy_flutter_client/widgets/main_appBar.dart';
+import 'package:cognigy_flutter_client/widgets/main_drawer.dart';
 import 'package:cognigy_flutter_client/widgets/messages.dart';
 import 'package:flutter/material.dart';
 
@@ -57,7 +59,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    
+
     //MessageProvider msgProvider = new MessageProvider();
 
     //Initializing the TextEditingController and ScrollController
@@ -173,15 +175,11 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
-    return Consumer<MessageProvider>(builder: (context, messageProvider, child) {
+    return Consumer<MessageProvider>(
+        builder: (context, messageProvider, child) {
       return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Image(
-            image: AssetImage('assets/images/logo.png'),
-            width: 200,
-          ),
-        ),
+        drawer: MainDrawer(),
+        appBar: MainAppBar(),
         body: Column(
           children: <Widget>[
             Expanded(
@@ -219,7 +217,8 @@ class _ChatPageState extends State<ChatPage> {
         messageWidget = imageMessage(index, message.text);
         break;
       case 'gallery':
-        messageWidget = galleryMessage(index, message.data, socketService, messageProvider);
+        messageWidget =
+            galleryMessage(index, message.data, socketService, messageProvider);
         break;
     }
     return messageWidget;
