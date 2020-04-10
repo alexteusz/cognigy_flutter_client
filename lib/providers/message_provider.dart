@@ -8,6 +8,8 @@ class MessageProvider extends ChangeNotifier {
   
   SocketService socketService = injector.get<SocketService>();
   Message cognigyMessage;
+  List _messages = List();
+  TextEditingController _textController = TextEditingController();
 
   MessageProvider() {
 
@@ -24,8 +26,6 @@ class MessageProvider extends ChangeNotifier {
 
   }
 
-  List _messages = List();
-
   void addMessage(Message message, String sender) {
     _messages.add({'message': message, 'sender': sender});
     notifyListeners();
@@ -39,4 +39,13 @@ class MessageProvider extends ChangeNotifier {
     _messages.clear();
     notifyListeners();
   }
+
+  void setUserInputText(String text) {
+    _textController.text = text;
+    notifyListeners();
+  }
+
+  String get getUserInputText => _textController.text;
+
+  TextEditingController get getUserInputTextController => _textController;
 }

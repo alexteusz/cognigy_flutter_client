@@ -48,22 +48,15 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   double height, width;
-  TextEditingController textController;
   ScrollController scrollController;
-  //Message cognigyMessage;
 
   final SocketService socketService = injector.get<SocketService>();
 
-  MessageProvider messageProvider;
 
   @override
   void initState() {
     super.initState();
 
-    //MessageProvider msgProvider = new MessageProvider();
-
-    //Initializing the TextEditingController and ScrollController
-    textController = TextEditingController();
     scrollController = ScrollController();
 
     socketService.createSocketConnection();
@@ -82,19 +75,21 @@ class _ChatPageState extends State<ChatPage> {
         autocorrect: true,
         enableSuggestions: true,
         onChanged: (value) {
-          setState(() {
-            textController.text = value;
-          });
+          // setState(() {
+          //   textController.text = value;
+          // });
+          messageProvider.setUserInputText(value);
         },
         onEditingComplete: () {
           //Check if the textfield has text or not
-          if (textController.text.isNotEmpty) {
-            socketService.sendMessage(textController.text);
+          if (messageProvider.getUserInputText.isNotEmpty) {
+            socketService.sendMessage(messageProvider.getUserInputText);
 
             messageProvider.addMessage(
-                new Message('text', textController.text, null), 'user');
+                new Message('text', messageProvider.getUserInputText, null), 'user');
 
-            textController.text = '';
+            //textController.text = '';
+            messageProvider.setUserInputText('');
             //Scrolldown the list to show the latest message
             scrollController.animateTo(
               scrollController.position.maxScrollExtent,
@@ -106,7 +101,7 @@ class _ChatPageState extends State<ChatPage> {
         decoration: InputDecoration.collapsed(
           hintText: 'Send a message...',
         ),
-        controller: textController,
+        controller: messageProvider.getUserInputTextController,
       ),
     );
   }
@@ -120,13 +115,14 @@ class _ChatPageState extends State<ChatPage> {
       highlightElevation: 0,
       onPressed: () {
         //Check if the textfield has text or not
-        if (textController.text.isNotEmpty) {
-          socketService.sendMessage(textController.text);
+        if (messageProvider.getUserInputText.isNotEmpty) {
+          socketService.sendMessage(messageProvider.getUserInputText);
 
           messageProvider.addMessage(
-              new Message('text', textController.text, null), 'user');
+              new Message('text', messageProvider.getUserInputText, null), 'user');
 
-          textController.text = '';
+          //textController.text = '';
+          messageProvider.setUserInputText('');
           //Scrolldown the list to show the latest message
           scrollController.animateTo(
             scrollController.position.maxScrollExtent,
@@ -138,7 +134,7 @@ class _ChatPageState extends State<ChatPage> {
       child: Icon(
         Icons.send,
         size: 30,
-        color: textController.text == '' ? Colors.black12 : Colors.black45,
+        color: messageProvider.getUserInputText == '' ? Colors.black12 : Colors.black45,
       ),
     );
   }
