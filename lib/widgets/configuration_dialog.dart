@@ -70,7 +70,7 @@ class ConfigurationDialog extends StatelessWidget {
                     Expanded(
                       child: RaisedButton(
                         child: Text(
-                          "SAVE",
+                          "CONNECT TO COGNIGY",
                           style: TextStyle(color: Colors.white),
                         ),
                         color: Colors.blue,
