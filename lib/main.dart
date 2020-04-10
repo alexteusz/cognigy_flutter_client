@@ -82,9 +82,6 @@ class _ChatPageState extends State<ChatPage> {
         autocorrect: true,
         enableSuggestions: true,
         onChanged: (value) {
-          // setState(() {
-          //   textController.text = value;
-          // });
           messageProvider.setUserInputText(value);
         },
         onEditingComplete: () {
@@ -95,8 +92,10 @@ class _ChatPageState extends State<ChatPage> {
             messageProvider.addMessage(
                 new Message('text', messageProvider.getUserInputText, null), 'user');
 
-            //textController.text = '';
             messageProvider.setUserInputText('');
+
+            focusNode.unfocus();
+
             //Scrolldown the list to show the latest message
             messageProvider.getScrollController.animateTo(
               messageProvider.getScrollController.position.maxScrollExtent,
