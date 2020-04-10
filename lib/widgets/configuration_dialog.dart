@@ -1,7 +1,11 @@
+import 'package:cognigy_flutter_client/cognigy/socket_service.dart';
+import 'package:cognigy_flutter_client/main.dart';
 import 'package:cognigy_flutter_client/providers/message_provider.dart';
 import 'package:flutter/material.dart';
 
 class ConfigurationDialog extends StatelessWidget {
+
+  final SocketService socketService = injector.get<SocketService>();
 
   @override
   Widget build(BuildContext context) {
@@ -72,11 +76,7 @@ class ConfigurationDialog extends StatelessWidget {
                         color: Colors.blue,
                         colorBrightness: Brightness.light,
                         onPressed: () {
-                          String socketUrl = messageProvider.getSocketUrl;
-                          String urlToken = messageProvider.getUrlToken;
-                          
-                          messageProvider.setSocketUrl(socketUrl);
-                          messageProvider.setURLToken(urlToken);
+                          socketService.createSocketConnection();
                           Navigator.pop(context);
                         },
                         shape: RoundedRectangleBorder(
