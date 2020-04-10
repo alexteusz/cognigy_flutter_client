@@ -49,12 +49,22 @@ class _ChatPageState extends State<ChatPage> {
   double height, width;
 
   final SocketService socketService = injector.get<SocketService>();
+  FocusNode focusNode;
 
   @override
   void initState() {
     super.initState(); 
 
     socketService.createSocketConnection();
+    focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    focusNode.dispose();
+
+    super.dispose();
   }
 
 
@@ -65,9 +75,10 @@ class _ChatPageState extends State<ChatPage> {
       padding: const EdgeInsets.all(2.0),
       margin: const EdgeInsets.only(left: 40.0),
       child: TextField(
+        focusNode: focusNode,
         keyboardType: TextInputType.text,
         textInputAction: TextInputAction.send,
-        autofocus: true,
+        autofocus: false,
         autocorrect: true,
         enableSuggestions: true,
         onChanged: (value) {
@@ -171,18 +182,21 @@ class _ChatPageState extends State<ChatPage> {
         builder: (context, messageProvider, child) {
       return Scaffold(
         appBar: MainAppBar(),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-                child: ListView.builder(
-              controller: messageProvider.getScrollController,
-              itemCount: messageProvider.getLength,
-              itemBuilder: (BuildContext context, int index) {
-                return buildMessage(index, messageProvider);
-              },
-            )),
-            buildInputArea(messageProvider)
-          ],
+        body: GestureDetector(
+            onTap: () => focusNode.unfocus(),
+            child: Column(
+            children: <Widget>[
+              Expanded(
+                  child: ListView.builder(
+                controller: messageProvider.getScrollController,
+                itemCount: messageProvider.getLength,
+                itemBuilder: (BuildContext context, int index) {
+                  return buildMessage(index, messageProvider);
+                },
+              )),
+              buildInputArea(messageProvider)
+            ],
+          ),
         ),
       );
     });
