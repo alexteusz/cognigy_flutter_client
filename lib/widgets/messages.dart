@@ -53,6 +53,13 @@ Widget quickRepliesMessage(int index, quickReplies, String text,
           socketService.sendMessage(qr['payload']);
           messageProvider.addMessage(
               new Message('text', qr['title'], null), 'user');
+
+          //Scrolldown the list to show the latest message
+          messageProvider.getScrollController.animateTo(
+            messageProvider.getScrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 600),
+            curve: Curves.ease,
+          );
         },
       ),
     ));
@@ -106,21 +113,30 @@ Widget galleryMessage(int index, List elements, SocketService socketService,
   for (var e in elements) {
     for (var b in e['buttons'])
       galleryButtons.add(FlatButton(
-        child: Text(b['title'].toUpperCase(), style: TextStyle(color: Colors.black),),
+        child: Text(
+          b['title'].toUpperCase(),
+          style: TextStyle(color: Colors.black),
+        ),
         onPressed: () {
           switch (b['type']) {
             case 'postback':
               messageProvider.socketService.sendMessage(b['payload']);
               messageProvider.addMessage(
-              new Message('text', b['title'], null), 'user');
+                  new Message('text', b['title'], null), 'user');
               break;
             case 'web_url':
               _launchUrl(b['url']);
           }
+
+          //Scrolldown the list to show the latest message
+          messageProvider.getScrollController.animateTo(
+            messageProvider.getScrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 600),
+            curve: Curves.ease,
+          );
         },
       ));
   }
-
 
   return Container(
       alignment: Alignment.centerLeft,
