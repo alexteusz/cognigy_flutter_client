@@ -129,6 +129,9 @@ class _ChatPageState extends State<ChatPage> {
 
           //textController.text = '';
           messageProvider.setUserInputText('');
+
+          focusNode.unfocus();
+
           //Scrolldown the list to show the latest message
           messageProvider.getScrollController.animateTo(
             messageProvider.getScrollController.position.maxScrollExtent,
