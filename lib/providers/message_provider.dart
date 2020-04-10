@@ -11,6 +11,8 @@ class MessageProvider extends ChangeNotifier {
   List _messages = List();
   TextEditingController _textController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  String _socketUrl;
+  String _urlToken;
 
   MessageProvider() {
 
@@ -51,4 +53,18 @@ class MessageProvider extends ChangeNotifier {
   TextEditingController get getUserInputTextController => _textController;
 
   ScrollController get getScrollController => _scrollController;
+
+  void setSocketUrl(String socketUrl) {
+    _socketUrl = socketUrl;
+    notifyListeners();
+  }
+
+  String get getSocketUrl => _socketUrl;
+
+  void setURLToken(String urlToken) {
+    _urlToken = urlToken;
+    notifyListeners();
+  }
+
+  String get getUrlToken => _urlToken;
 }
