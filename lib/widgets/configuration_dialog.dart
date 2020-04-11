@@ -30,7 +30,7 @@ class ConfigurationDialog extends StatelessWidget {
                 ),
                 SizedBox(height: 10.0),
                 Flexible(
-                  child: Text("Insert your AI's Endpoint URL and URLToken."),
+                  child: Text("Insert your AI's Endpoint URL and URL Token."),
                 ),
                 SizedBox(height: 30.0),
                 TextField(
@@ -69,6 +69,7 @@ class ConfigurationDialog extends StatelessWidget {
                   children: <Widget>[
                     Expanded(
                       child: RaisedButton(
+                        padding: EdgeInsets.all(15),
                         child: Text(
                           "CONNECT TO COGNIGY",
                           style: TextStyle(color: Colors.white),
