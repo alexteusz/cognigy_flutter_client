@@ -17,6 +17,7 @@ class MainAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+       elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.settings, color: Colors.black,),
             onPressed: () => _configurationDialog(context),
