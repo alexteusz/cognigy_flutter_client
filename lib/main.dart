@@ -218,7 +218,7 @@ class _ChatPageState extends State<ChatPage> {
 
     switch (message.type) {
       case 'text':
-        messageWidget = textMessage(index, sender, message.text);
+        messageWidget = textMessage(index, sender, message.text, messageProvider);
         break;
       case 'quick_replies':
         messageWidget = quickRepliesMessage(

@@ -13,25 +13,28 @@ _launchUrl(String url) async {
   }
 }
 
-Widget textMessage(int index, String sender, String text) {
+Widget textMessage(int index, String sender, String text, MessageProvider messageProvider) {
   if (text == null) return Container();
 
-  return Container(
-    alignment: sender == 'bot' ? Alignment.centerLeft : Alignment.centerRight,
-    child: Container(
-      padding: const EdgeInsets.all(20.0),
-      margin:
-          const EdgeInsets.only(top: 10, bottom: 10.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(
-        color: sender == 'bot' ? Colors.grey[600] : Colors.grey[200],
-        border: null,
-        borderRadius: BorderRadius.circular(30.0),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-            color: sender == 'bot' ? Colors.white : Colors.grey[900],
-            fontSize: 15.0),
+  return GestureDetector(
+    onTap: () => sender == 'user' ? messageProvider.setUserInputText(text) : null,
+      child: Container(
+      alignment: sender == 'bot' ? Alignment.centerLeft : Alignment.centerRight,
+      child: Container(
+        padding: const EdgeInsets.all(20.0),
+        margin:
+            const EdgeInsets.only(top: 10, bottom: 10.0, left: 20.0, right: 20.0),
+        decoration: BoxDecoration(
+          color: sender == 'bot' ? Colors.grey[600] : Colors.grey[200],
+          border: null,
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+              color: sender == 'bot' ? Colors.white : Colors.grey[900],
+              fontSize: 15.0),
+        ),
       ),
     ),
   );
