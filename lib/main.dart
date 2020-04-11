@@ -150,9 +150,9 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildInputArea(MessageProvider messageProvider) {
     return Container(
-      height: height * 0.1,
+      //height: height * 0.1,
       width: width,
-      constraints: BoxConstraints(minWidth: width, minHeight: height * 0.1),
+      //constraints: BoxConstraints(minWidth: width, minHeight: height * 0.1),
       decoration: new BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -196,7 +196,8 @@ class _ChatPageState extends State<ChatPage> {
                   return buildMessage(index, messageProvider);
                 },
               )),
-              buildInputArea(messageProvider)
+              buildInputArea(messageProvider),
+              !focusNode.hasFocus ? SizedBox(height: 20, child: Container(color: Colors.white,),) : Container(),
             ],
           ),
         ),
