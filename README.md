@@ -10,4 +10,5 @@ Connect your Cognigy.AI project with a mobile application.
 
 ## Todo: 
 
-- [ ] Add Push Notifications when their 
+- [ ] Add Push Notifications for enabling notify API usage
+- [ ] Store socket url and url token into file to make is persitent over time
