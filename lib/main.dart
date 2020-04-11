@@ -53,7 +53,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    super.initState(); 
+    super.initState();
 
     socketService.createSocketConnection();
     focusNode = FocusNode();
@@ -67,47 +67,54 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
-
   Widget buildChatInput(MessageProvider messageProvider) {
     return Container(
       width: width * 0.7,
       constraints: BoxConstraints(minWidth: width * 0.7),
-      padding: const EdgeInsets.all(2.0),
+      //padding: const EdgeInsets.all(2.0),
       margin: const EdgeInsets.only(left: 40.0),
-      child: TextField(
-        focusNode: focusNode,
-        keyboardType: TextInputType.text,
-        textInputAction: TextInputAction.send,
-        autofocus: false,
-        autocorrect: true,
-        enableSuggestions: true,
-        onChanged: (value) {
-          messageProvider.setUserInputText(value);
-        },
-        onEditingComplete: () {
-          //Check if the textfield has text or not
-          if (messageProvider.getUserInputText.isNotEmpty) {
-            socketService.sendMessage(messageProvider.getUserInputText);
+      decoration: BoxDecoration(
+          color: Colors.transparent,
+          border: Border.all(color: Colors.black12, width: 1.5),
+          borderRadius: BorderRadius.circular(30.0)),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 15.0),
+        child: TextField(
+          focusNode: focusNode,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.send,
+          autofocus: false,
+          autocorrect: true,
+          enableSuggestions: true,
+          onChanged: (value) {
+            messageProvider.setUserInputText(value);
+          },
+          onEditingComplete: () {
+            //Check if the textfield has text or not
+            if (messageProvider.getUserInputText.isNotEmpty) {
+              socketService.sendMessage(messageProvider.getUserInputText);
 
-            messageProvider.addMessage(
-                new Message('text', messageProvider.getUserInputText, null), 'user');
+              messageProvider.addMessage(
+                  new Message('text', messageProvider.getUserInputText, null),
+                  'user');
 
-            messageProvider.setUserInputText('');
+              messageProvider.setUserInputText('');
 
-            focusNode.unfocus();
+              focusNode.unfocus();
 
-            //Scrolldown the list to show the latest message
-            messageProvider.getScrollController.animateTo(
-              messageProvider.getScrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 600),
-              curve: Curves.ease,
-            );
-          }
-        },
-        decoration: InputDecoration.collapsed(
-          hintText: 'Send a message...',
+              //Scrolldown the list to show the latest message
+              messageProvider.getScrollController.animateTo(
+                messageProvider.getScrollController.position.maxScrollExtent,
+                duration: Duration(milliseconds: 600),
+                curve: Curves.ease,
+              );
+            }
+          },
+          decoration: InputDecoration.collapsed(
+            hintText: 'Send a message...',
+          ),
+          controller: messageProvider.getUserInputTextController,
         ),
-        controller: messageProvider.getUserInputTextController,
       ),
     );
   }
@@ -125,7 +132,8 @@ class _ChatPageState extends State<ChatPage> {
           socketService.sendMessage(messageProvider.getUserInputText);
 
           messageProvider.addMessage(
-              new Message('text', messageProvider.getUserInputText, null), 'user');
+              new Message('text', messageProvider.getUserInputText, null),
+              'user');
 
           //textController.text = '';
           messageProvider.setUserInputText('');
@@ -143,30 +151,17 @@ class _ChatPageState extends State<ChatPage> {
       child: Icon(
         Icons.send,
         size: 30,
-        color: messageProvider.getUserInputText == '' ? Colors.black12 : Colors.black45,
+        color: messageProvider.getUserInputText == ''
+            ? Colors.black12
+            : Colors.black,
       ),
     );
   }
 
   Widget buildInputArea(MessageProvider messageProvider) {
     return Container(
-      //height: height * 0.1,
       width: width,
-      //constraints: BoxConstraints(minWidth: width, minHeight: height * 0.1),
-      decoration: new BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            blurRadius: 5.0, // has the effect of softening the shadow
-            spreadRadius: 5.0, // has the effect of extending the shadow
-            offset: Offset(
-              10.0, // horizontal, move right 10
-              10.0, // vertical, move down 10
-            ),
-          )
-        ],
-      ),
+      color: Colors.transparent,
       child: Row(
         children: <Widget>[
           buildChatInput(messageProvider),
@@ -183,10 +178,11 @@ class _ChatPageState extends State<ChatPage> {
     return Consumer<MessageProvider>(
         builder: (context, messageProvider, child) {
       return Scaffold(
+        backgroundColor: Colors.white,
         appBar: MainAppBar(),
         body: GestureDetector(
-            onTap: () => focusNode.unfocus(),
-            child: Column(
+          onTap: () => focusNode.unfocus(),
+          child: Column(
             children: <Widget>[
               Expanded(
                   child: ListView.builder(
@@ -197,7 +193,14 @@ class _ChatPageState extends State<ChatPage> {
                 },
               )),
               buildInputArea(messageProvider),
-              !focusNode.hasFocus ? SizedBox(height: 20, child: Container(color: Colors.white,),) : Container(),
+              !focusNode.hasFocus
+                  ? SizedBox(
+                      height: 20,
+                      child: Container(
+                        color: Colors.white,
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),
