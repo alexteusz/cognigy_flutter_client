@@ -10,25 +10,25 @@ class MessageProvider extends ChangeNotifier {
   List _messages = List();
   TextEditingController _textController = TextEditingController();
   ScrollController _scrollController = ScrollController();
-  String _socketUrl;
-  String _urlToken;
 
   MessageProvider() {
-    socketService.socket.on('output', (cognigyResponse) {
-      // process the cognigy output message
-      cognigyMessage = processCognigyMessage(cognigyResponse);
+    try {
+      socketService.socket.on('output', (cognigyResponse) {
+        // process the cognigy output message
+        cognigyMessage = processCognigyMessage(cognigyResponse);
 
-      if (cognigyMessage != null) {
-        addMessage(cognigyMessage, 'bot');
+        if (cognigyMessage != null) {
+          addMessage(cognigyMessage, 'bot');
 
-        //Scrolldown the list to show the latest message
-        getScrollController.animateTo(
-          getScrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 600),
-          curve: Curves.ease,
-        );
-      }
-    });
+          //Scrolldown the list to show the latest message
+          getScrollController.animateTo(
+            getScrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 600),
+            curve: Curves.ease,
+          );
+        }
+      });
+    } catch (error) {}
   }
 
   void addMessage(Message message, String sender) {
@@ -55,18 +55,4 @@ class MessageProvider extends ChangeNotifier {
   TextEditingController get getUserInputTextController => _textController;
 
   ScrollController get getScrollController => _scrollController;
-
-  void setSocketUrl(String socketUrl) {
-    _socketUrl = socketUrl;
-    notifyListeners();
-  }
-
-  String get getSocketUrl => _socketUrl;
-
-  void setURLToken(String urlToken) {
-    _urlToken = urlToken;
-    notifyListeners();
-  }
-
-  String get getUrlToken => _urlToken;
 }

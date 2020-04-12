@@ -1,6 +1,7 @@
+import 'package:cognigy_flutter_client/helper/config_helper.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:uuid/uuid.dart';
-import 'package:cognigy_flutter_client/cognigy/config.dart' as config;
+//import 'package:cognigy_flutter_client/cognigy/config.dart' as config;
 
 class SocketService {
   IO.Socket socket;
@@ -13,7 +14,7 @@ class SocketService {
 
     if (connected) {
       socket.emit('processInput', {
-        'URLToken': config.urlToken,
+        'URLToken': config['urlToken'],
         'text': text,
         'userId': userId,
         'sessionId': sessionId,
@@ -26,13 +27,16 @@ class SocketService {
     }
   }
 
-  createSocketConnection() {
+  createSocketConnection() async {
     print("[SocketClient] try to connect to Cognigy.AI");
 
-    socket = IO.io(config.socketUrl, <String, dynamic>{
+    // get config data from persistent storage
+    var config = await getCognigyConfig();
+
+    socket = IO.io(config['socketUrl'], <String, dynamic>{
       'transports': ['websocket'],
       'extraHeaders': {
-        'URLToken': config.urlToken
+        'URLToken': config['urlToken']
       }
     });
 
