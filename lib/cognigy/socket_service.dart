@@ -10,7 +10,9 @@ class SocketService {
   final sessionId = Uuid().v1(); // time-based
   final userId = Uuid().v4(); // random
 
-  sendMessage(String text) {
+  sendMessage(String text) async {
+
+    var config = await getCognigyConfig();
 
     if (connected) {
       socket.emit('processInput', {
