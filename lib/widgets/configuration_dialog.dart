@@ -122,9 +122,8 @@ class _ConfigurationDialogState extends State<ConfigurationDialog> {
                                         _socketUrlTextController.text,
                                         _urlTokenTextController.text);
 
-                                    socketService.createSocketConnection();
-
-                                    Navigator.pop(context);
+                                    // set isConnected to false to force reconnting to Cognigy
+                                    Navigator.pop(context, false);
                                   }
                                 },
                                 shape: RoundedRectangleBorder(

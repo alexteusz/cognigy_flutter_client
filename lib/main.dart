@@ -63,41 +63,7 @@ class _ChatPageState extends State<ChatPage> {
     isConnected = false;
     focusNode = FocusNode();
 
-    // Connect to Cognigy.AI Socket.IO Endpoint
-    socketService.createSocketConnection().then((socket) {
-      if (socket != null) {
-        socket.on("connect", (_) {
-          print("[SocketClient] connection established");
-          setState(() {
-            isConnected = true;
-          });
-        });
-
-        socket.on("disconnect", (_) {
-          print("[SocketClient] disconnected");
-          setState(() {
-            isConnected = false;
-          });
-        });
-
-        socket.on('output', (cognigyResponse) {
-          // process the cognigy output message
-          cognigyMessage = processCognigyMessage(cognigyResponse);
-
-          if (cognigyMessage != null) {
-            this.setState(() =>
-                messages.add({'message': cognigyMessage, 'sender': 'bot'}));
-
-            //Scrolldown the list to show the latest message
-            scrollController.animateTo(
-              scrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 600),
-              curve: Curves.ease,
-            );
-          }
-        });
-      }
-    });
+    handleCognigyConnection();
 
     super.initState();
   }
@@ -108,6 +74,44 @@ class _ChatPageState extends State<ChatPage> {
     focusNode.dispose();
 
     super.dispose();
+  }
+
+  handleCognigyConnection() {
+    if (!isConnected) {
+      // Connect to Cognigy.AI Socket.IO Endpoint
+      socketService.createSocketConnection().then((socket) {
+        if (socket != null) {
+          socket.on("connect", (_) {
+            setState(() {
+              isConnected = true;
+            });
+          });
+
+          socket.on("disconnect", (_) {
+            setState(() {
+              isConnected = false;
+            });
+          });
+
+          socket.on('output', (cognigyResponse) {
+            // process the cognigy output message
+            cognigyMessage = processCognigyMessage(cognigyResponse);
+
+            if (cognigyMessage != null) {
+              this.setState(() =>
+                  messages.add({'message': cognigyMessage, 'sender': 'bot'}));
+
+              //Scrolldown the list to show the latest message
+              scrollController.animateTo(
+                scrollController.position.maxScrollExtent,
+                duration: Duration(milliseconds: 600),
+                curve: Curves.ease,
+              );
+            }
+          });
+        }
+      });
+    }
   }
 
   Widget buildChatInput() {
@@ -219,12 +223,19 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  _configurationDialog(BuildContext context) {
-    showDialog(
+  _configurationDialog(BuildContext context) async {
+    bool _isConnected = await showDialog(
         context: context,
         builder: (BuildContext context) {
           return ConfigurationDialog();
         });
+
+    this.setState(() {
+      isConnected = _isConnected;
+    });
+
+    socketService.socket.disconnect();
+    handleCognigyConnection();
   }
 
   @override
@@ -236,12 +247,11 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.settings,
-            color: Colors.black,
-          ),
-          onPressed: () => _configurationDialog(context),
-        ),
+            icon: const Icon(
+              Icons.settings,
+              color: Colors.black,
+            ),
+            onPressed: () => _configurationDialog(context)),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
