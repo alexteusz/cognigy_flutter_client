@@ -11,18 +11,19 @@ class ConfigurationDialog extends StatefulWidget {
 class _ConfigurationDialogState extends State<ConfigurationDialog> {
   final SocketService socketService = injector.get<SocketService>();
 
-  TextEditingController _socketUrlTextController;
-  TextEditingController _urlTokenTextController;
-
-  String _socketUrlValue = '';
-  String _urlTokenValue = '';
+  TextEditingController _socketUrlTextController = TextEditingController();
+  TextEditingController _urlTokenTextController = TextEditingController();
 
   @override
   void initState() {
-    _socketUrlTextController = new TextEditingController();
-    _urlTokenTextController = new TextEditingController();
-
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _socketUrlTextController.dispose();
+    _urlTokenTextController.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,11 +66,6 @@ class _ConfigurationDialogState extends State<ConfigurationDialog> {
                         SizedBox(height: 30.0),
                         TextField(
                           controller: _socketUrlTextController,
-                          onChanged: (value) {
-                            setState(() {
-                              _socketUrlValue = value;
-                            });
-                          },
                           decoration: InputDecoration(
                             labelText: 'Endpoint URL',
                             labelStyle: TextStyle(color: Colors.black),
@@ -88,11 +84,6 @@ class _ConfigurationDialogState extends State<ConfigurationDialog> {
                         SizedBox(height: 20.0),
                         TextField(
                             controller: _urlTokenTextController,
-                            onChanged: (value) {
-                              setState(() {
-                                _urlTokenValue = value;
-                              });
-                            },
                             decoration: InputDecoration(
                               labelText: 'URL Token',
                               labelStyle: TextStyle(color: Colors.black),
@@ -117,13 +108,19 @@ class _ConfigurationDialogState extends State<ConfigurationDialog> {
                                   "CONNECT TO COGNIGY",
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                color: _socketUrlValue.isNotEmpty && _urlTokenValue.isNotEmpty ? Colors.blue : Colors.grey,
+                                color: _socketUrlTextController
+                                            .text.isNotEmpty &&
+                                        _urlTokenTextController.text.isNotEmpty
+                                    ? Colors.blue
+                                    : Colors.grey,
                                 colorBrightness: Brightness.light,
                                 onPressed: () async {
-                                  if (_urlTokenValue.isNotEmpty &&
-                                      _socketUrlValue.isNotEmpty) {
+                                  if (_urlTokenTextController.text.isNotEmpty &&
+                                      _socketUrlTextController
+                                          .text.isNotEmpty) {
                                     setCognigyConfig(
-                                        _socketUrlValue, _urlTokenValue);
+                                        _socketUrlTextController.text,
+                                        _urlTokenTextController.text);
 
                                     socketService.createSocketConnection();
 
