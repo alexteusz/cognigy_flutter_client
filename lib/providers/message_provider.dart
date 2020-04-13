@@ -10,6 +10,7 @@ class MessageProvider extends ChangeNotifier {
   List _messages = List();
   TextEditingController _textController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  bool _socketConnected = false;
 
   MessageProvider() {
     try {
@@ -55,4 +56,11 @@ class MessageProvider extends ChangeNotifier {
   TextEditingController get getUserInputTextController => _textController;
 
   ScrollController get getScrollController => _scrollController;
+
+  void setSocketConnected(bool connected) {
+    _socketConnected = connected;
+    notifyListeners();
+  }
+
+  bool get socketIsConnected => _socketConnected;
 }

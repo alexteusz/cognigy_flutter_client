@@ -1,4 +1,5 @@
 import 'package:cognigy_flutter_client/helper/config_helper.dart';
+import 'package:cognigy_flutter_client/providers/message_provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:uuid/uuid.dart';
 //import 'package:cognigy_flutter_client/cognigy/config.dart' as config;
@@ -35,6 +36,8 @@ class SocketService {
     // get config data from persistent storage
     var config = await getCognigyConfig();
 
+    MessageProvider messageProvider = new MessageProvider();
+
     socket = IO.io(config['socketUrl'], <String, dynamic>{
       'transports': ['websocket'],
       'extraHeaders': {
@@ -46,8 +49,14 @@ class SocketService {
     this.socket.on("connect", (_) {
       print("[SocketClient] connection established");
       connected = true;
+
+      messageProvider.setSocketConnected(true);
     });
 
-    this.socket.on("disconnect", (_) => print("[SocketClient] disconnected"));
+    this.socket.on("disconnect", (_) {
+      print("[SocketClient] disconnected");
+
+      messageProvider.setSocketConnected(false);
+    }); 
   }
 }

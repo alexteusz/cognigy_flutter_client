@@ -179,7 +179,7 @@ class _ChatPageState extends State<ChatPage> {
         builder: (context, messageProvider, child) {
       return Scaffold(
         backgroundColor: Colors.white,
-        appBar: MainAppBar(),
+        appBar: MainAppBar(messageProvider: messageProvider,),
         body: GestureDetector(
           onTap: () => focusNode.unfocus(),
           child: Column(
