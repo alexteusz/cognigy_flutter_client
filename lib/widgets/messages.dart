@@ -123,7 +123,7 @@ Widget galleryMessage(int index, List elements, SocketService socketService,
         onPressed: () {
           switch (b['type']) {
             case 'postback':
-              messageProvider.socketService.sendMessage(b['payload']);
+              socketService.sendMessage(b['payload']);
               messageProvider.addMessage(
                   new Message('text', b['title'], null), 'user');
               break;
