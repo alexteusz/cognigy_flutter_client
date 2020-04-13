@@ -440,7 +440,7 @@ class _ChatPageState extends State<ChatPage> {
                 setState(() {
                   messages.add({
                     'message': (new Message('text', b['title'], null)),
-                    'sender': 'bot'
+                    'sender': 'user'
                   });
                 });
                 break;
