@@ -26,9 +26,6 @@ dependencies:
   # SessionId for Cognigy.AI
   uuid: ^2.0.4
 
-  # state management
-  provider: ^4.0.4
-
   # url launcher to open links
   url_launcher: ^5.4.2
 
