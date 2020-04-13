@@ -48,6 +48,7 @@ class _ChatPageState extends State<ChatPage> {
   TextEditingController textController;
   ScrollController scrollController;
   Message cognigyMessage;
+  bool isConnected;
 
   final SocketService socketService = injector.get<SocketService>();
 
@@ -59,14 +60,28 @@ class _ChatPageState extends State<ChatPage> {
     //Initializing the TextEditingController and ScrollController
     textController = TextEditingController();
     scrollController = ScrollController();
-
+    isConnected = false;
     focusNode = FocusNode();
 
     // Connect to Cognigy.AI Socket.IO Endpoint
     socketService.createSocketConnection();
 
+    socketService.socket.on("connect", (_) {
+      print("[SocketClient] connection established");
+      setState(() {
+        isConnected = true;
+      });
+    });
+
+    socketService.socket.on("disconnect", (_) {
+      print("[SocketClient] disconnected");
+      setState(() {
+        isConnected = false;
+      });
+    });
+
     try {
-        socketService.socket.on('output', (cognigyResponse) {
+      socketService.socket.on('output', (cognigyResponse) {
         // process the cognigy output message
         cognigyMessage = processCognigyMessage(cognigyResponse);
 
@@ -232,7 +247,7 @@ class _ChatPageState extends State<ChatPage> {
             padding: const EdgeInsets.only(right: 15.0),
             child: Icon(
               Icons.brightness_1,
-              color: true ? Colors.green : Colors.red,
+              color: isConnected ? Colors.green : Colors.red,
               size: 10,
             ),
           )
@@ -351,7 +366,7 @@ class _ChatPageState extends State<ChatPage> {
             setState(() {
               messages.add({
                 'message': (new Message('text', qr['title'], null)),
-                'sender': 'bot'
+                'sender': 'user'
               });
             });
 

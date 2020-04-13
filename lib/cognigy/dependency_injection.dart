@@ -1,4 +1,3 @@
-  
 import 'package:flutter_simple_dependency_injection/injector.dart';
 import 'package:cognigy_flutter_client/cognigy/socket_service.dart';
 

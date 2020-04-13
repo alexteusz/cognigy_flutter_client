@@ -1,7 +1,7 @@
 import 'package:cognigy_flutter_client/helper/config_helper.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:uuid/uuid.dart';
-//import 'package:cognigy_flutter_client/cognigy/config.dart' as config;
+import 'package:cognigy_flutter_client/cognigy/config.dart' as config;
 
 class SocketService {
   IO.Socket socket;
@@ -12,11 +12,11 @@ class SocketService {
 
   sendMessage(String text) async {
 
-    var config = await getCognigyConfig();
+    //var config = await getCognigyConfig();
 
     if (connected) {
       socket.emit('processInput', {
-        'URLToken': config['urlToken'],
+        'URLToken': config.urlToken,
         'text': text,
         'userId': userId,
         'sessionId': sessionId,
@@ -33,23 +33,18 @@ class SocketService {
     print("[SocketClient] try to connect to Cognigy.AI");
 
     // get config data from persistent storage
-    var config = await getCognigyConfig();
+    //var config = await getCognigyConfig();
 
-    socket = IO.io(config['socketUrl'], <String, dynamic>{
+    socket = IO.io(config.socketUrl, <String, dynamic>{
       'transports': ['websocket'],
       'extraHeaders': {
-        'URLToken': config['urlToken']
+        'URLToken': config.urlToken
       }
     });
-
 
     this.socket.on("connect", (_) {
       print("[SocketClient] connection established");
       connected = true;
     });
-
-    this.socket.on("disconnect", (_) {
-      print("[SocketClient] disconnected");
-    }); 
   }
 }
