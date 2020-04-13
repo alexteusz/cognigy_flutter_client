@@ -64,40 +64,40 @@ class _ChatPageState extends State<ChatPage> {
     focusNode = FocusNode();
 
     // Connect to Cognigy.AI Socket.IO Endpoint
-    socketService.createSocketConnection();
+    socketService.createSocketConnection().then((socket) {
+      if (socket != null) {
+        socket.on("connect", (_) {
+          print("[SocketClient] connection established");
+          setState(() {
+            isConnected = true;
+          });
+        });
 
-    socketService.socket.on("connect", (_) {
-      print("[SocketClient] connection established");
-      setState(() {
-        isConnected = true;
-      });
+        socket.on("disconnect", (_) {
+          print("[SocketClient] disconnected");
+          setState(() {
+            isConnected = false;
+          });
+        });
+
+        socket.on('output', (cognigyResponse) {
+          // process the cognigy output message
+          cognigyMessage = processCognigyMessage(cognigyResponse);
+
+          if (cognigyMessage != null) {
+            this.setState(() =>
+                messages.add({'message': cognigyMessage, 'sender': 'bot'}));
+
+            //Scrolldown the list to show the latest message
+            scrollController.animateTo(
+              scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 600),
+              curve: Curves.ease,
+            );
+          }
+        });
+      }
     });
-
-    socketService.socket.on("disconnect", (_) {
-      print("[SocketClient] disconnected");
-      setState(() {
-        isConnected = false;
-      });
-    });
-
-    try {
-      socketService.socket.on('output', (cognigyResponse) {
-        // process the cognigy output message
-        cognigyMessage = processCognigyMessage(cognigyResponse);
-
-        if (cognigyMessage != null) {
-          this.setState(
-              () => messages.add({'message': cognigyMessage, 'sender': 'bot'}));
-
-          //Scrolldown the list to show the latest message
-          scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 600),
-            curve: Curves.ease,
-          );
-        }
-      });
-    } catch (error) {}
 
     super.initState();
   }

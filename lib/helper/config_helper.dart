@@ -29,8 +29,6 @@ Future getCognigyConfig() async {
       config = await json.decode(fileData);
     }
 
-    print(config);
-
     return config;
   } catch (e) {
     // If encountering an error, return
