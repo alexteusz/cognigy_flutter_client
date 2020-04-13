@@ -225,17 +225,20 @@ class _ChatPageState extends State<ChatPage> {
 
   _configurationDialog(BuildContext context) async {
     bool _isConnected = await showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return ConfigurationDialog();
         });
 
-    this.setState(() {
-      isConnected = _isConnected;
-    });
+    if (!_isConnected) {
+      this.setState(() {
+        isConnected = _isConnected;
+      });
 
-    socketService.socket.disconnect();
-    handleCognigyConnection();
+      socketService.socket.disconnect();
+      handleCognigyConnection();
+    }
   }
 
   @override

@@ -102,20 +102,42 @@ class _ConfigurationDialogState extends State<ConfigurationDialog> {
                         Row(
                           children: <Widget>[
                             Expanded(
+                              flex: 3,
+                              child: OutlineButton(
+                                padding: EdgeInsets.all(15),
+                                child: Text(
+                                  "CLOSE",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                color: Colors.grey,
+                                //colorBrightness: Brightness.light,
+                                onPressed: () async {
+                                  Navigator.pop(context, true);
+                                },
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(10.0)),
+                              ),
+                            ),
+                            SizedBox(width: 15,),
+                            Expanded(
+                              flex: 5,
                               child: RaisedButton(
                                 padding: EdgeInsets.all(15),
                                 child: Text(
-                                  "CONNECT TO COGNIGY",
+                                  "CONNECT",
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 color: _socketUrlTextController
                                             .text.isNotEmpty &&
-                                        _urlTokenTextController.text.isNotEmpty
+                                        _urlTokenTextController
+                                            .text.isNotEmpty
                                     ? Colors.blue
                                     : Colors.grey,
                                 colorBrightness: Brightness.light,
                                 onPressed: () async {
-                                  if (_urlTokenTextController.text.isNotEmpty &&
+                                  if (_urlTokenTextController
+                                          .text.isNotEmpty &&
                                       _socketUrlTextController
                                           .text.isNotEmpty) {
                                     setCognigyConfig(
@@ -127,7 +149,8 @@ class _ConfigurationDialogState extends State<ConfigurationDialog> {
                                   }
                                 },
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0)),
+                                    borderRadius:
+                                        BorderRadius.circular(10.0)),
                               ),
                             ),
                           ],
