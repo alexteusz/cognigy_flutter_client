@@ -320,7 +320,8 @@ class _ChatPageState extends State<ChatPage> {
         messageWidget = galleryMessage(index, message.data, socketService);
         break;
       case 'buttons':
-        messageWidget = buttonsMessage(index, message.text, message.data, socketService);
+        messageWidget =
+            buttonsMessage(index, message.text, message.data, socketService);
         break;
     }
     return messageWidget;
@@ -547,20 +548,18 @@ class _ChatPageState extends State<ChatPage> {
             }));
   }
 
-
-
-
-
-
-
-  Widget buttonsMessage(int index, String buttonText, List buttons, SocketService socketService) {
-
-     List<Widget> buttonWidgets = List<Widget>();
+  Widget buttonsMessage(
+      int index, String buttonText, List buttons, SocketService socketService) {
+    List<Widget> buttonWidgets = List<Widget>();
     // build buttons
     for (var b in buttons) {
-      buttonWidgets.add(FlatButton(
+      buttonWidgets.add(
+        FlatButton(
           padding: EdgeInsets.all(10.0),
-          child: Text(b['title'], style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue),),
+          child: Text(
+            b['title'],
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue),
+          ),
           onPressed: () {
             switch (b['type']) {
               case 'postback':
@@ -591,8 +590,8 @@ class _ChatPageState extends State<ChatPage> {
 
     return Container(
       alignment: Alignment.centerLeft,
-       margin: const EdgeInsets.only(
-                top: 10, bottom: 10.0, left: 20.0, right: 20.0),
+      margin:
+          const EdgeInsets.only(top: 10, bottom: 10.0, left: 20.0, right: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -601,7 +600,8 @@ class _ChatPageState extends State<ChatPage> {
             decoration: BoxDecoration(
               color: Colors.grey[600],
               border: null,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             ),
             child: Text(
               buttonText,
