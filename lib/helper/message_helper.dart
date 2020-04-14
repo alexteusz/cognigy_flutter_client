@@ -1,11 +1,11 @@
 import 'package:cognigy_flutter_client/models/message_model.dart';
 
-Message processCognigyMessage(dynamic cognigyResponse) {
+ChatMessage processCognigyMessage(dynamic cognigyResponse) {
 
   if (cognigyResponse['type'] == 'output') {
     // check for simple text
     if (cognigyResponse['data']['text'] != null) {
-      return new Message('text', cognigyResponse['data']['text'], null);
+      return new ChatMessage('text', cognigyResponse['data']['text'], null);
     }
 
     // check for quick replies
@@ -15,27 +15,27 @@ Message processCognigyMessage(dynamic cognigyResponse) {
       
       List quickReplies = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['quick_replies'];
 
-      return new Message('quick_replies', text, quickReplies);
+      return new ChatMessage('quick_replies', text, quickReplies);
     }
 
     // check for image
     if (cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['type'] == 'image') {
       String url = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['url'];
 
-      return new Message('image_attachment', url, null);
+      return new ChatMessage('image_attachment', url, null);
     }
 
     // check for gallery
     if (cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['type'] == 'template' && cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['template_type'] == 'generic') {
       List galleryItems = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['elements'];
 
-      return new Message('gallery', '', galleryItems);
+      return new ChatMessage('gallery', '', galleryItems);
     }
 
     if (cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['type'] == 'video') {
       String url = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['url'];
 
-      return new Message('video', url, null);
+      return new ChatMessage('video', url, null);
     }
 
     if (cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['type'] == 'video') {
@@ -47,7 +47,7 @@ Message processCognigyMessage(dynamic cognigyResponse) {
       String buttonText = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['text'];
       List buttons = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['buttons'];
 
-      return new Message('buttons', buttonText, buttons);
+      return new ChatMessage('buttons', buttonText, buttons);
     }
   }
 }
