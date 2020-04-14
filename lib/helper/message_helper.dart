@@ -2,8 +2,6 @@ import 'package:cognigy_flutter_client/models/message_model.dart';
 
 Message processCognigyMessage(dynamic cognigyResponse) {
 
-  print(cognigyResponse);
-
   if (cognigyResponse['type'] == 'output') {
     // check for simple text
     if (cognigyResponse['data']['text'] != null) {
