@@ -127,6 +127,7 @@ class _ChatPageState extends State<ChatPage> {
       child: Padding(
         padding: const EdgeInsets.only(left: 15.0),
         child: TextField(
+          showCursor: false,
           focusNode: focusNode,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.send,
