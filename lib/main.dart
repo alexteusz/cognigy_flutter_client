@@ -98,7 +98,7 @@ class _ChatPageState extends State<ChatPage> {
     handleCognigyConnection();
 
     // request notification permissions on IOS devices
-    _requestIOSPermissions();
+    requestIOSPermissions(flutterLocalNotificationsPlugin);
 
     super.initState();
   }
@@ -108,17 +108,6 @@ class _ChatPageState extends State<ChatPage> {
     // Clean up the focus node when the Form is disposed.
     focusNode.dispose();
     super.dispose();
-  }
-
-  void _requestIOSPermissions() {
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
   }
 
   handleCognigyConnection() {
