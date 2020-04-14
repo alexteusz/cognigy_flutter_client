@@ -319,7 +319,8 @@ class _ChatPageState extends State<ChatPage> {
       case 'gallery':
         messageWidget = galleryMessage(index, message.data, socketService);
         break;
-      case 'video':
+      case 'buttons':
+        messageWidget = buttonsMessage(index, message.text, message.data, socketService);
         break;
     }
     return messageWidget;
@@ -544,5 +545,75 @@ class _ChatPageState extends State<ChatPage> {
                     )),
               );
             }));
+  }
+
+
+
+
+
+
+
+  Widget buttonsMessage(int index, String buttonText, List buttons, SocketService socketService) {
+
+     List<Widget> buttonWidgets = List<Widget>();
+    // build buttons
+    for (var b in buttons) {
+      buttonWidgets.add(FlatButton(
+          padding: EdgeInsets.all(10.0),
+          child: Text(b['title'], style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue),),
+          onPressed: () {
+            switch (b['type']) {
+              case 'postback':
+                socketService.sendMessage(b['payload']);
+
+                setState(() {
+                  messages.add({
+                    'message': (new Message('text', b['title'], null)),
+                    'sender': 'user'
+                  });
+                });
+                break;
+              case 'web_url':
+                _launchUrl(b['url']);
+                break;
+            }
+
+            //Scrolldown the list to show the latest message
+            scrollController.animateTo(
+              scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 600),
+              curve: Curves.ease,
+            );
+          },
+        ),
+      );
+    }
+
+    return Container(
+      alignment: Alignment.centerLeft,
+       margin: const EdgeInsets.only(
+                top: 10, bottom: 10.0, left: 20.0, right: 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[600],
+              border: null,
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+            ),
+            child: Text(
+              buttonText,
+              style: TextStyle(color: Colors.white, fontSize: 15.0),
+            ),
+          ),
+          Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: buttonWidgets),
+        ],
+      ),
+    );
   }
 }
