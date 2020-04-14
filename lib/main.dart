@@ -20,9 +20,7 @@ Injector injector;
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-
 NotificationAppLaunchDetails notificationAppLaunchDetails;
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,9 +32,9 @@ Future<void> main() async {
   // Note: permissions aren't requested here just to demonstrate that can be done later using the `requestPermissions()` method
   // of the `IOSFlutterLocalNotificationsPlugin` class
   var initializationSettingsIOS = IOSInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
+    requestAlertPermission: false,
+    requestBadgePermission: false,
+    requestSoundPermission: false,
   );
   var initializationSettings = InitializationSettings(
       initializationSettingsAndroid, initializationSettingsIOS);
@@ -73,7 +71,7 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   FocusNode focusNode;
   List messages;
   double height, width;
@@ -81,6 +79,7 @@ class _ChatPageState extends State<ChatPage> {
   ScrollController scrollController;
   ChatMessage cognigyMessage;
   bool isConnected;
+  AppLifecycleState appLifecycleState;
 
   final SocketService socketService = injector.get<SocketService>();
 
@@ -100,6 +99,9 @@ class _ChatPageState extends State<ChatPage> {
     // request notification permissions on IOS devices
     requestIOSPermissions(flutterLocalNotificationsPlugin);
 
+    // check if the application is in foreground or not
+    WidgetsBinding.instance.addObserver(this);
+
     super.initState();
   }
 
@@ -108,6 +110,13 @@ class _ChatPageState extends State<ChatPage> {
     // Clean up the focus node when the Form is disposed.
     focusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    setState(() {
+      appLifecycleState = state;
+    });
   }
 
   handleCognigyConnection() {
@@ -130,6 +139,14 @@ class _ChatPageState extends State<ChatPage> {
           socket.on('output', (cognigyResponse) {
             // process the cognigy output message
             cognigyMessage = processCognigyMessage(cognigyResponse);
+
+            try {
+              if (appLifecycleState.index == 1 ||
+                  appLifecycleState.index == 2) {
+                showNotification(
+                    cognigyMessage.text, flutterLocalNotificationsPlugin);
+              }
+            } catch (_) {}
 
             if (cognigyMessage != null) {
               this.setState(() =>
