@@ -1,9 +1,12 @@
 //import 'package:cognigy_flutter_client/widgets/message.dart';
 import 'package:cognigy_flutter_client/helper/message_helper.dart';
+import 'package:cognigy_flutter_client/helper/notification_helper.dart';
 import 'package:cognigy_flutter_client/models/message_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cognigy_flutter_client/widgets/configuration_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 // Import required files for Cognigy.AI connection
 import 'package:flutter_simple_dependency_injection/injector.dart';
@@ -14,7 +17,36 @@ import 'package:cognigy_flutter_client/cognigy/socket_service.dart';
 // Create Injector
 Injector injector;
 
-void main() async {
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+
+NotificationAppLaunchDetails notificationAppLaunchDetails;
+
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  notificationAppLaunchDetails =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+  // Note: permissions aren't requested here just to demonstrate that can be done later using the `requestPermissions()` method
+  // of the `IOSFlutterLocalNotificationsPlugin` class
+  var initializationSettingsIOS = IOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+  );
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      debugPrint('[Push Notification] payload was: $payload');
+    }
+  });
+
   DependencyInjection().initialise(Injector.getInjector());
   injector = Injector.getInjector();
   await AppInitializer().initialise(injector);
@@ -47,7 +79,7 @@ class _ChatPageState extends State<ChatPage> {
   double height, width;
   TextEditingController textController;
   ScrollController scrollController;
-  Message cognigyMessage;
+  ChatMessage cognigyMessage;
   bool isConnected;
 
   final SocketService socketService = injector.get<SocketService>();
@@ -65,6 +97,9 @@ class _ChatPageState extends State<ChatPage> {
 
     handleCognigyConnection();
 
+    // request notification permissions on IOS devices
+    _requestIOSPermissions();
+
     super.initState();
   }
 
@@ -72,8 +107,18 @@ class _ChatPageState extends State<ChatPage> {
   void dispose() {
     // Clean up the focus node when the Form is disposed.
     focusNode.dispose();
-
     super.dispose();
+  }
+
+  void _requestIOSPermissions() {
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
   handleCognigyConnection() {
@@ -146,7 +191,7 @@ class _ChatPageState extends State<ChatPage> {
 
               setState(() {
                 messages.add({
-                  'message': new Message('text', textController.text, null),
+                  'message': new ChatMessage('text', textController.text, null),
                   'sender': 'user'
                 });
               });
@@ -186,7 +231,7 @@ class _ChatPageState extends State<ChatPage> {
 
           setState(() {
             messages.add({
-              'message': new Message('text', textController.text, null),
+              'message': new ChatMessage('text', textController.text, null),
               'sender': 'user'
             });
           });
@@ -255,7 +300,7 @@ class _ChatPageState extends State<ChatPage> {
               Icons.settings,
               color: Colors.black,
             ),
-            onPressed: () => _configurationDialog(context)),
+            onPressed: () => showNotification(flutterLocalNotificationsPlugin)),// _configurationDialog(context)),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
@@ -303,7 +348,7 @@ class _ChatPageState extends State<ChatPage> {
     Widget messageWidget;
 
     String sender = messages[index]['sender'];
-    Message message = messages[index]['message'];
+    ChatMessage message = messages[index]['message'];
 
     switch (message.type) {
       case 'text':
@@ -381,7 +426,7 @@ class _ChatPageState extends State<ChatPage> {
 
             setState(() {
               messages.add({
-                'message': (new Message('text', qr['title'], null)),
+                'message': (new ChatMessage('text', qr['title'], null)),
                 'sender': 'user'
               });
             });
@@ -455,7 +500,7 @@ class _ChatPageState extends State<ChatPage> {
 
                 setState(() {
                   messages.add({
-                    'message': (new Message('text', b['title'], null)),
+                    'message': (new ChatMessage('text', b['title'], null)),
                     'sender': 'user'
                   });
                 });
@@ -567,7 +612,7 @@ class _ChatPageState extends State<ChatPage> {
 
                 setState(() {
                   messages.add({
-                    'message': (new Message('text', b['title'], null)),
+                    'message': (new ChatMessage('text', b['title'], null)),
                     'sender': 'user'
                   });
                 });
