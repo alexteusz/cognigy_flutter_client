@@ -8,7 +8,8 @@ This project implements a demo mobile application to show how to connect your [C
 
 ## Todo: 
 
-- [ ] Add Push Notifications for enabling notify API usage
+- [x] Add Push Notifications for enabling notify API usage
+- [ ] Add Push Notifications for Android devices
 - [x] Store socket url and url token into file to make is persitent over time
 - [ ] Add list message support
 - [ ] Add various styles which the can choose in the settings
