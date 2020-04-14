@@ -289,7 +289,7 @@ class _ChatPageState extends State<ChatPage> {
               Icons.settings,
               color: Colors.black,
             ),
-            onPressed: () => showNotification(flutterLocalNotificationsPlugin)),// _configurationDialog(context)),
+            onPressed: () => _configurationDialog(context)),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
