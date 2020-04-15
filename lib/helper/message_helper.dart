@@ -49,5 +49,13 @@ ChatMessage processCognigyMessage(dynamic cognigyResponse) {
 
       return new ChatMessage('buttons', buttonText, buttons);
     }
+
+    // check for list
+    if (cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['type'] == 'template' && cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['template_type'] == 'list') {
+      List listItems = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['elements'];
+      List listButtons = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['buttons'];
+    
+      return new ChatMessage('list', '', {'listItems': listItems, 'listButtons': listButtons});
+    }
   }
 }

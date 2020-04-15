@@ -376,6 +376,8 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         messageWidget =
             buttonsMessage(index, message.text, message.data, socketService);
         break;
+      case 'list':
+        messageWidget = listMessage(index, message.data, socketService);
     }
     return messageWidget;
   }
@@ -558,43 +560,40 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                             buttonPadding: EdgeInsets.symmetric(horizontal: 10),
                             alignment: MainAxisAlignment.end,
                             children: <Widget>[
-                                  if (elements[itemIndex]['buttons'] != null)
-                                    for (var b in elements[itemIndex]['buttons']) 
-                                        FlatButton(
-                                          child: Text(
-                                            b['title'].toUpperCase(),
-                                            style: TextStyle(color: Colors.black),
-                                          ),
-                                          onPressed: () {
-                                            switch (b['type']) {
-                                              case 'postback':
-                                                socketService
-                                                    .sendMessage(b['payload']);
+                              if (elements[itemIndex]['buttons'] != null)
+                                for (var b in elements[itemIndex]['buttons'])
+                                  FlatButton(
+                                    child: Text(
+                                      b['title'].toUpperCase(),
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    onPressed: () {
+                                      switch (b['type']) {
+                                        case 'postback':
+                                          socketService
+                                              .sendMessage(b['payload']);
 
-                                                setState(() {
-                                                  messages.add({
-                                                    'message': (new ChatMessage(
-                                                        'text',
-                                                        b['title'],
-                                                        null)),
-                                                    'sender': 'user'
-                                                  });
-                                                });
-                                                break;
-                                              case 'web_url':
-                                                _launchUrl(b['url']);
-                                            }
+                                          setState(() {
+                                            messages.add({
+                                              'message': (new ChatMessage(
+                                                  'text', b['title'], null)),
+                                              'sender': 'user'
+                                            });
+                                          });
+                                          break;
+                                        case 'web_url':
+                                          _launchUrl(b['url']);
+                                      }
 
-                                            //Scrolldown the list to show the latest message
-                                            scrollController.animateTo(
-                                              scrollController
-                                                  .position.maxScrollExtent,
-                                              duration:
-                                                  Duration(milliseconds: 600),
-                                              curve: Curves.ease,
-                                            );
-                                          },
-                                        )               
+                                      //Scrolldown the list to show the latest message
+                                      scrollController.animateTo(
+                                        scrollController
+                                            .position.maxScrollExtent,
+                                        duration: Duration(milliseconds: 600),
+                                        curve: Curves.ease,
+                                      );
+                                    },
+                                  )
                             ],
                           ),
                         )
@@ -671,5 +670,116 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         ],
       ),
     );
+  }
+
+  Widget listMessage(int index, dynamic data, SocketService socketService) {
+    List items = data['listItems'];
+    List buttons = data['listButtons'];
+
+    List<Widget> listWidgets = List<Widget>();
+
+    for (var item in items) {
+      print(item['buttons']);
+      listWidgets.add(Card(
+          color: Colors.white,
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 250.0,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned.fill(
+                        child: Container(
+                      color: Colors.black,
+                      child: Opacity(
+                        opacity: item['image_url'].toString().isNotEmpty ? 0.5 : 1,
+                        child: item['image_url'].toString().isNotEmpty ? Image.network(item['image_url'], fit: BoxFit.cover) : Container(color: Colors.white,),
+                      ),
+                    )),
+                    Positioned(
+                      bottom: 16.0,
+                      left: 16.0,
+                      right: 16.0,
+                      child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.bottomLeft,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                item['title'],
+                                style: TextStyle(
+                                    color: item['image_url'].toString().isNotEmpty ? Colors.white : Colors.black,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 20),
+                              ),
+                              Text(
+                                item['subtitle'],
+                                style: TextStyle(
+                                    color:item['image_url'].toString().isNotEmpty ? Colors.white : Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15),
+                              )
+                            ],
+                          )),
+                    )
+                  ],
+                ),
+              ),
+              ButtonBarTheme(
+                data: ButtonBarThemeData(),
+                child: ButtonBar(
+                  buttonPadding: EdgeInsets.symmetric(horizontal: 10),
+                  alignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    if (item['buttons'] != null)
+                      for (var b in item['buttons'])
+                        if (b['type'] != 'element_share')
+                          FlatButton(
+                            child: Text(
+                              b['title'].toString().toUpperCase(),
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            onPressed: () {
+                              switch (b['type']) {
+                                case 'postback':
+                                  socketService.sendMessage(b['payload']);
+
+                                  setState(() {
+                                    messages.add({
+                                      'message': (new ChatMessage(
+                                          'text', b['title'], null)),
+                                      'sender': 'user'
+                                    });
+                                  });
+                                  break;
+                                case 'web_url':
+                                  _launchUrl(b['url']);
+                              }
+
+                              //Scrolldown the list to show the latest message
+                              scrollController.animateTo(
+                                scrollController.position.maxScrollExtent,
+                                duration: Duration(milliseconds: 600),
+                                curve: Curves.ease,
+                              );
+                            },
+                          )
+                  ],
+                ),
+              )
+            ],
+          )));
+    }
+
+    return Container(
+      alignment: Alignment.centerLeft,
+      margin:
+          const EdgeInsets.only(top: 10, bottom: 10.0, left: 20.0, right: 20.0),
+      child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: listWidgets),
+      );
   }
 }
