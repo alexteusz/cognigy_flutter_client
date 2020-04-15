@@ -679,7 +679,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     List<Widget> listWidgets = List<Widget>();
 
     for (var item in items) {
-      print(item['buttons']);
       listWidgets.add(Card(
           color: Colors.white,
           child: Column(
