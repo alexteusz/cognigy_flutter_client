@@ -28,7 +28,7 @@ ChatMessage processCognigyMessage(dynamic cognigyResponse) {
     // check for gallery
     if (cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['type'] == 'template' && cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['template_type'] == 'generic') {
       List galleryItems = cognigyResponse['data']['data']['_cognigy']['_webchat']['message']['attachment']['payload']['elements'];
-
+    
       return new ChatMessage('gallery', '', galleryItems);
     }
 
