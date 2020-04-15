@@ -492,44 +492,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   }
 
   Widget galleryMessage(int index, List elements, SocketService socketService) {
-    List<Widget> galleryButtons = List<Widget>();
-    // build gallery buttons
-    for (var e in elements) {
-      // check if gallery element has buttons
-      if (e['buttons'] != null) {
-        for (var b in e['buttons'])
-          galleryButtons.add(FlatButton(
-            child: Text(
-              b['title'].toUpperCase(),
-              style: TextStyle(color: Colors.black),
-            ),
-            onPressed: () {
-              switch (b['type']) {
-                case 'postback':
-                  socketService.sendMessage(b['payload']);
-
-                  setState(() {
-                    messages.add({
-                      'message': (new ChatMessage('text', b['title'], null)),
-                      'sender': 'user'
-                    });
-                  });
-                  break;
-                case 'web_url':
-                  _launchUrl(b['url']);
-              }
-
-              //Scrolldown the list to show the latest message
-              scrollController.animateTo(
-                scrollController.position.maxScrollExtent,
-                duration: Duration(milliseconds: 600),
-                curve: Curves.ease,
-              );
-            },
-          ));
-      }
-    }
-
     return Container(
         alignment: Alignment.centerLeft,
         margin: EdgeInsets.symmetric(vertical: 20.0),
@@ -537,7 +499,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: elements.length,
-            itemBuilder: (BuildContext context, int index) {
+            itemBuilder: (BuildContext context, int itemIndex) {
               return Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.0),
                 width: MediaQuery.of(context).size.width,
@@ -555,7 +517,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                 child: Opacity(
                                   opacity: 0.5,
                                   child: Image.network(
-                                      elements[index]['image_url'],
+                                      elements[itemIndex]['image_url'],
                                       fit: BoxFit.cover),
                                 ),
                               )),
@@ -571,14 +533,14 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          elements[index]['title'],
+                                          elements[itemIndex]['title'],
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w700,
                                               fontSize: 20),
                                         ),
                                         Text(
-                                          elements[index]['subtitle'],
+                                          elements[itemIndex]['subtitle'],
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w600,
@@ -595,7 +557,45 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                           child: ButtonBar(
                             buttonPadding: EdgeInsets.symmetric(horizontal: 10),
                             alignment: MainAxisAlignment.end,
-                            children: galleryButtons,
+                            children: <Widget>[
+                                  if (elements[itemIndex]['buttons'] != null)
+                                    for (var b in elements[itemIndex]['buttons']) 
+                                        FlatButton(
+                                          child: Text(
+                                            b['title'].toUpperCase(),
+                                            style: TextStyle(color: Colors.black),
+                                          ),
+                                          onPressed: () {
+                                            switch (b['type']) {
+                                              case 'postback':
+                                                socketService
+                                                    .sendMessage(b['payload']);
+
+                                                setState(() {
+                                                  messages.add({
+                                                    'message': (new ChatMessage(
+                                                        'text',
+                                                        b['title'],
+                                                        null)),
+                                                    'sender': 'user'
+                                                  });
+                                                });
+                                                break;
+                                              case 'web_url':
+                                                _launchUrl(b['url']);
+                                            }
+
+                                            //Scrolldown the list to show the latest message
+                                            scrollController.animateTo(
+                                              scrollController
+                                                  .position.maxScrollExtent,
+                                              duration:
+                                                  Duration(milliseconds: 600),
+                                              curve: Curves.ease,
+                                            );
+                                          },
+                                        )               
+                            ],
                           ),
                         )
                       ],
