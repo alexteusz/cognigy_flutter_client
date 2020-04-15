@@ -5,7 +5,6 @@ import 'package:cognigy_flutter_client/models/message_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cognigy_flutter_client/widgets/configuration_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 // Import required files for Cognigy.AI connection
@@ -382,14 +381,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     return messageWidget;
   }
 
-// method to open a url
-  _launchUrl(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+
 
   Widget textMessage(int index, String sender, String text) {
     if (text == null) return Container();
@@ -582,7 +574,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                           });
                                           break;
                                         case 'web_url':
-                                          _launchUrl(b['url']);
+                                          launchUrl(b['url']);
                                       }
 
                                       //Scrolldown the list to show the latest message
@@ -628,7 +620,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                 });
                 break;
               case 'web_url':
-                _launchUrl(b['url']);
+                launchUrl(b['url']);
                 break;
             }
 
@@ -753,7 +745,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                   });
                                   break;
                                 case 'web_url':
-                                  _launchUrl(b['url']);
+                                  launchUrl(b['url']);
                               }
 
                               //Scrolldown the list to show the latest message
