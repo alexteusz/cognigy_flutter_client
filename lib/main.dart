@@ -493,36 +493,39 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     List<Widget> galleryButtons = List<Widget>();
     // build gallery buttons
     for (var e in elements) {
-      for (var b in e['buttons'])
-        galleryButtons.add(FlatButton(
-          child: Text(
-            b['title'].toUpperCase(),
-            style: TextStyle(color: Colors.black),
-          ),
-          onPressed: () {
-            switch (b['type']) {
-              case 'postback':
-                socketService.sendMessage(b['payload']);
+      // check if gallery element has buttons
+      if (e['buttons'] != null) {
+        for (var b in e['buttons'])
+          galleryButtons.add(FlatButton(
+            child: Text(
+              b['title'].toUpperCase(),
+              style: TextStyle(color: Colors.black),
+            ),
+            onPressed: () {
+              switch (b['type']) {
+                case 'postback':
+                  socketService.sendMessage(b['payload']);
 
-                setState(() {
-                  messages.add({
-                    'message': (new ChatMessage('text', b['title'], null)),
-                    'sender': 'user'
+                  setState(() {
+                    messages.add({
+                      'message': (new ChatMessage('text', b['title'], null)),
+                      'sender': 'user'
+                    });
                   });
-                });
-                break;
-              case 'web_url':
-                _launchUrl(b['url']);
-            }
+                  break;
+                case 'web_url':
+                  _launchUrl(b['url']);
+              }
 
-            //Scrolldown the list to show the latest message
-            scrollController.animateTo(
-              scrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 600),
-              curve: Curves.ease,
-            );
-          },
-        ));
+              //Scrolldown the list to show the latest message
+              scrollController.animateTo(
+                scrollController.position.maxScrollExtent,
+                duration: Duration(milliseconds: 600),
+                curve: Curves.ease,
+              );
+            },
+          ));
+      }
     }
 
     return Container(
