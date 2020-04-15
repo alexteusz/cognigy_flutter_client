@@ -286,6 +286,8 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     if (!_isConnected) {
       this.setState(() {
         isConnected = _isConnected;
+        // clear messages if new connection is configured
+        messages.clear();
       });
 
       socketService.socket.disconnect();
