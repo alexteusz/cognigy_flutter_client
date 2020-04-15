@@ -19,5 +19,5 @@ In order to send notifications which should be displayed to the user, use the [C
 - [x] Add Push Notifications for enabling notify API usage
 - [ ] Add Push Notifications for Android devices
 - [x] Store socket url and url token into file to make is persitent over time
-- [ ] Add list message support
+- [x] Add list message support
 - [ ] Add various styles which the can choose in the settings
