@@ -14,6 +14,7 @@ import 'package:flutter_simple_dependency_injection/injector.dart';
 import 'package:cognigy_flutter_client/cognigy/app_initializer.dart';
 import 'package:cognigy_flutter_client/cognigy/dependency_injection.dart';
 import 'package:cognigy_flutter_client/cognigy/socket_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // Create Injector
 Injector injector;
@@ -402,7 +403,15 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             border: null,
             borderRadius: BorderRadius.circular(30.0),
           ),
-          child: Html(data: text, defaultTextStyle: TextStyle(color: sender == 'bot' ? Colors.white : Colors.grey[900], fontSize: 15.0),shrinkToFit: true,)
+          child: Html(data: text, defaultTextStyle: TextStyle(color: sender == 'bot' ? Colors.white : Colors.grey[900], fontSize: 15.0),shrinkToFit: true, linkStyle: const TextStyle(
+              color: Colors.white,
+              decorationColor: Colors.white,
+              decoration: TextDecoration.underline,
+              fontWeight: FontWeight.w600
+            ),
+            onLinkTap: (url) {
+              launch(url);
+            },)
         ),
       ),
     );
@@ -455,7 +464,15 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
               border: null,
               borderRadius: BorderRadius.circular(30.0),
             ),
-            child: Html(data: text, defaultTextStyle: TextStyle(color: Colors.white, fontSize: 15.0),shrinkToFit: true,)
+            child: Html(data: text, defaultTextStyle: TextStyle(color: Colors.white, fontSize: 15.0),shrinkToFit: true, linkStyle: const TextStyle(
+              color: Colors.white,
+              decorationColor: Colors.white,
+              decoration: TextDecoration.underline,
+              fontWeight: FontWeight.w600
+            ),
+            onLinkTap: (url) {
+              launch(url);
+            },)
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10.0),
