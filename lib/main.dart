@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cognigy_flutter_client/widgets/configuration_dialog.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:html/dom.dart' as dom;
 
 // Import required files for Cognigy.AI connection
 import 'package:flutter_simple_dependency_injection/injector.dart';
@@ -400,12 +402,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             border: null,
             borderRadius: BorderRadius.circular(30.0),
           ),
-          child: Text(
-            text,
-            style: TextStyle(
-                color: sender == 'bot' ? Colors.white : Colors.grey[900],
-                fontSize: 15.0),
-          ),
+          child: Html(data: text, defaultTextStyle: TextStyle(color: sender == 'bot' ? Colors.white : Colors.grey[900], fontSize: 15.0),shrinkToFit: true,)
         ),
       ),
     );
@@ -458,10 +455,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
               border: null,
               borderRadius: BorderRadius.circular(30.0),
             ),
-            child: Text(
-              text,
-              style: TextStyle(color: Colors.white, fontSize: 15.0),
-            ),
+            child: Html(data: text, defaultTextStyle: TextStyle(color: Colors.white, fontSize: 15.0),shrinkToFit: true,)
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10.0),
