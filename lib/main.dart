@@ -2,6 +2,7 @@
 import 'package:cognigy_flutter_client/helper/message_helper.dart';
 import 'package:cognigy_flutter_client/helper/notification_helper.dart';
 import 'package:cognigy_flutter_client/models/message_model.dart';
+import 'package:cognigy_flutter_client/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cognigy_flutter_client/widgets/configuration_dialog.dart';
@@ -60,24 +61,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cognigy Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        // Define the default brightness and colors.
-        brightness: Brightness.light,
-        // bot message bubble color
-        primaryColor: Colors.grey[600],
-        // user message bubble color
-        accentColor: Colors.grey[200],
-        // Define the default font family.
-        fontFamily: 'Helvetica',
-        // Define the default TextTheme. Use this to specify the default
-        // text styling for headlines, titles, bodies of text, and more.
-        textTheme: TextTheme(
-          headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          title: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w700, color: Colors.white),
-          subtitle: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w600, color: Colors.white),
-          body1: TextStyle(fontSize: 15.0, fontFamily: 'Helvetica', color: Colors.white),
-        ),
-      ),
+      theme: theme,
       home: ChatPage(),
     );
   }
