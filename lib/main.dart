@@ -61,7 +61,22 @@ class MyApp extends StatelessWidget {
       title: 'Cognigy Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        // Define the default brightness and colors.
+        brightness: Brightness.light,
+        // bot message bubble color
+        primaryColor: Colors.grey[600],
+        // user message bubble color
+        accentColor: Colors.grey[200],
+        // Define the default font family.
+        fontFamily: 'Helvetica',
+        // Define the default TextTheme. Use this to specify the default
+        // text styling for headlines, titles, bodies of text, and more.
+        textTheme: TextTheme(
+          headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          title: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w700, color: Colors.white),
+          subtitle: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w600, color: Colors.white),
+          body1: TextStyle(fontSize: 15.0, fontFamily: 'Helvetica', color: Colors.white),
+        ),
       ),
       home: ChatPage(),
     );
@@ -397,19 +412,19 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             margin: const EdgeInsets.only(
                 top: 10, bottom: 10.0, left: 20.0, right: 20.0),
             decoration: BoxDecoration(
-              color: sender == 'bot' ? Colors.grey[600] : Colors.grey[200],
+              color: sender == 'bot' ? Theme.of(context).primaryColor : Theme.of(context).accentColor,
               border: null,
               borderRadius: BorderRadius.circular(30.0),
             ),
             child: Html(
               data: text,
               defaultTextStyle: TextStyle(
-                  color: sender == 'bot' ? Colors.white : Colors.grey[900],
-                  fontSize: 15.0),
+                  color: sender == 'bot' ? Theme.of(context).textTheme.body1.color : Colors.grey[900],
+                  fontSize: Theme.of(context).textTheme.body1.fontSize),
               shrinkToFit: true,
-              linkStyle: const TextStyle(
-                  color: Colors.white,
-                  decorationColor: Colors.white,
+              linkStyle: TextStyle(
+                  color: Theme.of(context).textTheme.body1.color,
+                  decorationColor: Theme.of(context).textTheme.body1.color,
                   decoration: TextDecoration.underline,
                   fontWeight: FontWeight.w600),
               onLinkTap: (url) {
@@ -463,18 +478,17 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
               margin: const EdgeInsets.only(
                   top: 10, bottom: 10.0, left: 20.0, right: 20.0),
               decoration: BoxDecoration(
-                color: Colors.grey[600],
+                color: Theme.of(context).primaryColor,
                 border: null,
                 borderRadius: BorderRadius.circular(30.0),
               ),
               child: Html(
                 data: text,
-                defaultTextStyle:
-                    TextStyle(color: Colors.white, fontSize: 15.0),
+                defaultTextStyle: Theme.of(context).textTheme.body1,
                 shrinkToFit: true,
-                linkStyle: const TextStyle(
-                    color: Colors.white,
-                    decorationColor: Colors.white,
+                linkStyle: TextStyle(
+                    color: Theme.of(context).textTheme.body1.color,
+                    decorationColor: Theme.of(context).textTheme.body1.color,
                     decoration: TextDecoration.underline,
                     fontWeight: FontWeight.w600),
                 onLinkTap: (url) {
@@ -546,17 +560,11 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                       children: <Widget>[
                                         Text(
                                           elements[itemIndex]['title'],
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 20),
+                                          style: Theme.of(context).textTheme.title,
                                         ),
                                         Text(
                                           elements[itemIndex]['subtitle'],
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 15),
+                                          style: Theme.of(context).textTheme.subtitle,
                                         )
                                       ],
                                     )),
@@ -663,19 +671,18 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
           Container(
             padding: const EdgeInsets.all(20.0),
             decoration: BoxDecoration(
-              color: Colors.grey[600],
+              color: Theme.of(context).primaryColor,
               border: null,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             ),
             child: Html(
                 data: buttonText,
-                defaultTextStyle:
-                    TextStyle(color: Colors.white, fontSize: 15.0),
+                defaultTextStyle: Theme.of(context).textTheme.body1,
                 shrinkToFit: true,
-                linkStyle: const TextStyle(
-                    color: Colors.white,
-                    decorationColor: Colors.white,
+                linkStyle: TextStyle(
+                    color: Theme.of(context).textTheme.body1.color,
+                    decorationColor: Theme.of(context).textTheme.body1.color,
                     decoration: TextDecoration.underline,
                     fontWeight: FontWeight.w600)),
           ),
