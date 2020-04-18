@@ -247,7 +247,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
@@ -266,7 +266,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             ),
           )
         ],
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).backgroundColor,
         title: Image(
           image: AssetImage('assets/images/logo.png'),
           width: 200,
@@ -289,7 +289,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                 ? SizedBox(
                     height: 20,
                     child: Container(
-                      color: Colors.white,
+                      color: Theme.of(context).backgroundColor,
                     ),
                   )
                 : Container(),
@@ -460,7 +460,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                 padding: EdgeInsets.symmetric(horizontal: 10.0),
                 width: MediaQuery.of(context).size.width,
                 child: Card(
-                    color: Colors.white,
+                    color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Theme.of(context).primaryColor : Colors.white,
                     child: Column(
                       children: <Widget>[
                         SizedBox(
@@ -633,7 +633,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
 
     for (var item in items) {
       listWidgets.add(Card(
-          color: Colors.white,
+          color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Theme.of(context).primaryColor : Colors.white,
           child: Column(
             children: <Widget>[
               SizedBox(
@@ -650,7 +650,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                             ? Image.network(item['image_url'],
                                 fit: BoxFit.cover)
                             : Container(
-                                color: Colors.white,
+                                color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Theme.of(context).primaryColor : Colors.white,
                               ),
                       ),
                     )),

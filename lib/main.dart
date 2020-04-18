@@ -53,7 +53,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cognigy Demo',
       debugShowCheckedModeBanner: false,
-      theme: theme,
+      theme: lightTheme,
+      darkTheme: darkTheme,
       home: ChatPage(),
     );
   }
