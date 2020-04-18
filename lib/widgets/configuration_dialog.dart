@@ -140,7 +140,7 @@ class _ConfigurationDialogState extends State<ConfigurationDialog> {
                                           .text.isNotEmpty &&
                                       _socketUrlTextController
                                           .text.isNotEmpty) {
-                                    setCognigyConfig(
+                                    await setCognigyConfig(
                                         _socketUrlTextController.text,
                                         _urlTokenTextController.text);
 
