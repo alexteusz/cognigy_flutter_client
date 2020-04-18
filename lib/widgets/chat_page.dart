@@ -13,7 +13,6 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 class ChatPage extends StatefulWidget {
-
   @override
   _ChatPageState createState() => new _ChatPageState();
 }
@@ -267,9 +266,12 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
           )
         ],
         backgroundColor: Theme.of(context).backgroundColor,
-        title: Image(
-          image: AssetImage('assets/images/logo.png'),
-          width: 200,
+        title: GestureDetector(
+          onTap: () => launch('https://www.cognigy.com'),
+          child: Image(
+            image: AssetImage('assets/images/logo.png'),
+            width: 200,
+          ),
         ),
       ),
       body: GestureDetector(
@@ -342,14 +344,18 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             margin: const EdgeInsets.only(
                 top: 10, bottom: 10.0, left: 20.0, right: 20.0),
             decoration: BoxDecoration(
-              color: sender == 'bot' ? Theme.of(context).primaryColor : Theme.of(context).accentColor,
+              color: sender == 'bot'
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).accentColor,
               border: null,
               borderRadius: BorderRadius.circular(30.0),
             ),
             child: Html(
               data: text,
               defaultTextStyle: TextStyle(
-                  color: sender == 'bot' ? Theme.of(context).textTheme.body1.color : Colors.grey[900],
+                  color: sender == 'bot'
+                      ? Theme.of(context).textTheme.body1.color
+                      : Colors.grey[900],
                   fontSize: Theme.of(context).textTheme.body1.fontSize),
               shrinkToFit: true,
               linkStyle: TextStyle(
@@ -460,7 +466,10 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                 padding: EdgeInsets.symmetric(horizontal: 10.0),
                 width: MediaQuery.of(context).size.width,
                 child: Card(
-                    color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Theme.of(context).primaryColor : Colors.white,
+                    color: MediaQuery.of(context).platformBrightness ==
+                            Brightness.dark
+                        ? Theme.of(context).primaryColor
+                        : Colors.white,
                     child: Column(
                       children: <Widget>[
                         SizedBox(
@@ -490,11 +499,14 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                       children: <Widget>[
                                         Text(
                                           elements[itemIndex]['title'],
-                                          style: Theme.of(context).textTheme.title,
+                                          style:
+                                              Theme.of(context).textTheme.title,
                                         ),
                                         Text(
                                           elements[itemIndex]['subtitle'],
-                                          style: Theme.of(context).textTheme.subtitle,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle,
                                         )
                                       ],
                                     )),
@@ -633,7 +645,9 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
 
     for (var item in items) {
       listWidgets.add(Card(
-          color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Theme.of(context).primaryColor : Colors.white,
+          color: MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Theme.of(context).primaryColor
+              : Colors.white,
           child: Column(
             children: <Widget>[
               SizedBox(
@@ -650,7 +664,11 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                             ? Image.network(item['image_url'],
                                 fit: BoxFit.cover)
                             : Container(
-                                color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Theme.of(context).primaryColor : Colors.white,
+                                color:
+                                    MediaQuery.of(context).platformBrightness ==
+                                            Brightness.dark
+                                        ? Theme.of(context).primaryColor
+                                        : Colors.white,
                               ),
                       ),
                     )),
