@@ -384,8 +384,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     return messageWidget;
   }
 
-
-
   Widget textMessage(int index, String sender, String text) {
     if (text == null) return Container();
 
@@ -395,24 +393,29 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         alignment:
             sender == 'bot' ? Alignment.centerLeft : Alignment.centerRight,
         child: Container(
-          padding: const EdgeInsets.all(20.0),
-          margin: const EdgeInsets.only(
-              top: 10, bottom: 10.0, left: 20.0, right: 20.0),
-          decoration: BoxDecoration(
-            color: sender == 'bot' ? Colors.grey[600] : Colors.grey[200],
-            border: null,
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          child: Html(data: text, defaultTextStyle: TextStyle(color: sender == 'bot' ? Colors.white : Colors.grey[900], fontSize: 15.0),shrinkToFit: true, linkStyle: const TextStyle(
-              color: Colors.white,
-              decorationColor: Colors.white,
-              decoration: TextDecoration.underline,
-              fontWeight: FontWeight.w600
+            padding: const EdgeInsets.all(20.0),
+            margin: const EdgeInsets.only(
+                top: 10, bottom: 10.0, left: 20.0, right: 20.0),
+            decoration: BoxDecoration(
+              color: sender == 'bot' ? Colors.grey[600] : Colors.grey[200],
+              border: null,
+              borderRadius: BorderRadius.circular(30.0),
             ),
-            onLinkTap: (url) {
-              launch(url);
-            },)
-        ),
+            child: Html(
+              data: text,
+              defaultTextStyle: TextStyle(
+                  color: sender == 'bot' ? Colors.white : Colors.grey[900],
+                  fontSize: 15.0),
+              shrinkToFit: true,
+              linkStyle: const TextStyle(
+                  color: Colors.white,
+                  decorationColor: Colors.white,
+                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.w600),
+              onLinkTap: (url) {
+                launch(url);
+              },
+            )),
       ),
     );
   }
@@ -456,24 +459,28 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.all(20.0),
-            margin: const EdgeInsets.only(
-                top: 10, bottom: 10.0, left: 20.0, right: 20.0),
-            decoration: BoxDecoration(
-              color: Colors.grey[600],
-              border: null,
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-            child: Html(data: text, defaultTextStyle: TextStyle(color: Colors.white, fontSize: 15.0),shrinkToFit: true, linkStyle: const TextStyle(
-              color: Colors.white,
-              decorationColor: Colors.white,
-              decoration: TextDecoration.underline,
-              fontWeight: FontWeight.w600
-            ),
-            onLinkTap: (url) {
-              launch(url);
-            },)
-          ),
+              padding: const EdgeInsets.all(20.0),
+              margin: const EdgeInsets.only(
+                  top: 10, bottom: 10.0, left: 20.0, right: 20.0),
+              decoration: BoxDecoration(
+                color: Colors.grey[600],
+                border: null,
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: Html(
+                data: text,
+                defaultTextStyle:
+                    TextStyle(color: Colors.white, fontSize: 15.0),
+                shrinkToFit: true,
+                linkStyle: const TextStyle(
+                    color: Colors.white,
+                    decorationColor: Colors.white,
+                    decoration: TextDecoration.underline,
+                    fontWeight: FontWeight.w600),
+                onLinkTap: (url) {
+                  launch(url);
+                },
+              )),
           Padding(
             padding: const EdgeInsets.only(left: 10.0),
             child: Wrap(children: quickReplyWidgets),
@@ -661,10 +668,16 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             ),
-            child: Text(
-              buttonText,
-              style: TextStyle(color: Colors.white, fontSize: 15.0),
-            ),
+            child: Html(
+                data: buttonText,
+                defaultTextStyle:
+                    TextStyle(color: Colors.white, fontSize: 15.0),
+                shrinkToFit: true,
+                linkStyle: const TextStyle(
+                    color: Colors.white,
+                    decorationColor: Colors.white,
+                    decoration: TextDecoration.underline,
+                    fontWeight: FontWeight.w600)),
           ),
           Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -694,8 +707,14 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                         child: Container(
                       color: Colors.black,
                       child: Opacity(
-                        opacity: item['image_url'].toString().isNotEmpty ? 0.5 : 1,
-                        child: item['image_url'].toString().isNotEmpty ? Image.network(item['image_url'], fit: BoxFit.cover) : Container(color: Colors.white,),
+                        opacity:
+                            item['image_url'].toString().isNotEmpty ? 0.5 : 1,
+                        child: item['image_url'].toString().isNotEmpty
+                            ? Image.network(item['image_url'],
+                                fit: BoxFit.cover)
+                            : Container(
+                                color: Colors.white,
+                              ),
                       ),
                     )),
                     Positioned(
@@ -711,14 +730,20 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                               Text(
                                 item['title'],
                                 style: TextStyle(
-                                    color: item['image_url'].toString().isNotEmpty ? Colors.white : Colors.black,
+                                    color:
+                                        item['image_url'].toString().isNotEmpty
+                                            ? Colors.white
+                                            : Colors.black,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 20),
                               ),
                               Text(
                                 item['subtitle'],
                                 style: TextStyle(
-                                    color:item['image_url'].toString().isNotEmpty ? Colors.white : Colors.black,
+                                    color:
+                                        item['image_url'].toString().isNotEmpty
+                                            ? Colors.white
+                                            : Colors.black,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 15),
                               )
@@ -779,9 +804,9 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       margin:
           const EdgeInsets.only(top: 10, bottom: 10.0, left: 20.0, right: 20.0),
       child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: listWidgets),
-      );
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: listWidgets),
+    );
   }
 }
