@@ -56,12 +56,12 @@ class _ConfigurationDialogState extends State<ConfigurationDialog> {
                       children: <Widget>[
                         Text(
                           "Configuration",
-                          style: Theme.of(context).textTheme.title,
+                          style: TextStyle(color: Colors.black, fontSize: 20.0),
                         ),
                         SizedBox(height: 10.0),
                         Flexible(
                           child: Text(
-                              "Insert your AI's Endpoint URL and URL Token."),
+                              "Insert your AI's Endpoint URL and URL Token.", style: TextStyle(color: Colors.black, fontSize: 15.0),),
                         ),
                         SizedBox(height: 30.0),
                         TextField(
