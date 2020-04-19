@@ -118,8 +118,8 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       //padding: const EdgeInsets.all(2.0),
       margin: const EdgeInsets.only(left: 40.0),
       decoration: BoxDecoration(
-          color: Colors.transparent,
-          border: Border.all(color: Colors.black12, width: 1.5),
+          color: Theme.of(context).accentColor,
+          //border: Border.all(color: Colors.black12, width: 1.5),
           borderRadius: BorderRadius.circular(30.0)),
       child: Padding(
         padding: const EdgeInsets.only(left: 15.0),
