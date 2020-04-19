@@ -48,6 +48,16 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     // check if the application is in foreground or not
     WidgetsBinding.instance.addObserver(this);
 
+    // add text field listener to handle the cursor position
+    textController.addListener(() {
+      String text = textController.text;
+      textController.value = textController.value.copyWith(
+          text: text,
+          selection:
+              TextSelection(baseOffset: text.length, extentOffset: text.length),
+          composing: TextRange.empty);
+    });
+
     super.initState();
   }
 
@@ -124,7 +134,9 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       child: Padding(
         padding: const EdgeInsets.only(left: 15.0),
         child: TextField(
-          showCursor: false,
+          showCursor: true,
+          cursorRadius: Radius.circular(30),
+          cursorColor: Theme.of(context).primaryColor,
           focusNode: focusNode,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.send,
@@ -269,7 +281,9 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         title: GestureDetector(
           onTap: () => launch('https://www.cognigy.com'),
           child: Image(
-            image: MediaQuery.of(context).platformBrightness == Brightness.dark ? AssetImage('assets/images/logo_white.png') : AssetImage('assets/images/logo.png'),
+            image: MediaQuery.of(context).platformBrightness == Brightness.dark
+                ? AssetImage('assets/images/logo_white.png')
+                : AssetImage('assets/images/logo.png'),
             width: 200,
           ),
         ),
