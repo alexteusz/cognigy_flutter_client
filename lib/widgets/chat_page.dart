@@ -269,7 +269,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         title: GestureDetector(
           onTap: () => launch('https://www.cognigy.com'),
           child: Image(
-            image: AssetImage('assets/images/logo.png'),
+            image: MediaQuery.of(context).platformBrightness == Brightness.dark ? AssetImage('assets/images/logo_white.png') : AssetImage('assets/images/logo.png'),
             width: 200,
           ),
         ),
