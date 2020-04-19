@@ -27,6 +27,8 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   bool isConnected;
   AppLifecycleState appLifecycleState;
 
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+
   final SocketService socketService = injector.get<SocketService>();
 
   @override
@@ -65,6 +67,25 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     });
   }
 
+  addMessageToChat(ChatMessage message, String sender) {
+    // get index to insert message
+    var messageIndex = messages.length;
+
+    // add message to list
+    messages.add({'message': message, 'sender': sender});
+
+    // add message to animated list in UI
+    _listKey.currentState
+        .insertItem(messageIndex, duration: Duration(milliseconds: 300));
+
+    //Scrolldown the list to show the latest message
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 600),
+      curve: Curves.ease,
+    );
+  }
+
   handleCognigyConnection() {
     if (!isConnected) {
       // Connect to Cognigy.AI Socket.IO Endpoint
@@ -95,15 +116,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             } catch (_) {}
 
             if (cognigyMessage != null) {
-              this.setState(() =>
-                  messages.add({'message': cognigyMessage, 'sender': 'bot'}));
-
-              //Scrolldown the list to show the latest message
-              scrollController.animateTo(
-                scrollController.position.maxScrollExtent,
-                duration: Duration(milliseconds: 600),
-                curve: Curves.ease,
-              );
+              addMessageToChat(cognigyMessage, 'bot');
             }
           });
         }
@@ -151,23 +164,12 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             if (textController.text.isNotEmpty) {
               socketService.sendMessage(textController.text);
 
-              setState(() {
-                messages.add({
-                  'message': new ChatMessage('text', textController.text, null),
-                  'sender': 'user'
-                });
-              });
+              addMessageToChat(
+                  new ChatMessage('text', textController.text, null), 'user');
 
               textController.text = '';
 
               focusNode.unfocus();
-
-              //Scrolldown the list to show the latest message
-              scrollController.animateTo(
-                scrollController.position.maxScrollExtent,
-                duration: Duration(milliseconds: 600),
-                curve: Curves.ease,
-              );
             }
           },
           decoration: InputDecoration.collapsed(
@@ -191,23 +193,12 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         if (textController.text.isNotEmpty) {
           socketService.sendMessage(textController.text);
 
-          setState(() {
-            messages.add({
-              'message': new ChatMessage('text', textController.text, null),
-              'sender': 'user'
-            });
-          });
+          addMessageToChat(
+              new ChatMessage('text', textController.text, null), 'user');
 
           textController.text = '';
 
           focusNode.unfocus();
-
-          //Scrolldown the list to show the latest message
-          scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 600),
-            curve: Curves.ease,
-          );
         }
       },
       child: Icon(
@@ -291,11 +282,21 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         child: Column(
           children: <Widget>[
             Expanded(
-                child: ListView.builder(
+                child: AnimatedList(
+              key: _listKey,
               controller: scrollController,
-              itemCount: messages.length,
-              itemBuilder: (BuildContext context, int index) {
-                return buildMessage(index);
+              initialItemCount: 0,
+              itemBuilder:
+                  (BuildContext context, int index, Animation animation) {
+                return SlideTransition(
+                  child: buildMessage(index),
+                  position: Tween<Offset>(
+                    begin: messages[index]['sender'] == 'bot'
+                        ? Offset(-1.0, 0.0)
+                        : Offset(1.0, 0.0),
+                    end: Offset.zero,
+                  ).animate(animation),
+                );
               },
             )),
             buildInputArea(),
@@ -398,19 +399,8 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
           onPressed: () {
             socketService.sendMessage(qr['payload']);
 
-            setState(() {
-              messages.add({
-                'message': (new ChatMessage('text', qr['title'], null)),
-                'sender': 'user'
-              });
-            });
-
-            //Scrolldown the list to show the latest message
-            scrollController.animateTo(
-              scrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 600),
-              curve: Curves.ease,
-            );
+            addMessageToChat(
+                new ChatMessage('text', qr['title'], null), 'user');
           },
         ),
       ));
@@ -545,13 +535,11 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                           socketService
                                               .sendMessage(b['payload']);
 
-                                          setState(() {
-                                            messages.add({
-                                              'message': (new ChatMessage(
-                                                  'text', b['title'], null)),
-                                              'sender': 'user'
-                                            });
-                                          });
+                                          addMessageToChat(
+                                              new ChatMessage(
+                                                  'text', b['title'], null),
+                                              'user');
+
                                           break;
                                         case 'web_url':
                                           launchUrl(b['url']);
@@ -592,24 +580,14 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
               case 'postback':
                 socketService.sendMessage(b['payload']);
 
-                setState(() {
-                  messages.add({
-                    'message': (new ChatMessage('text', b['title'], null)),
-                    'sender': 'user'
-                  });
-                });
+                addMessageToChat(
+                    new ChatMessage('text', b['title'], null), 'user');
+
                 break;
               case 'web_url':
                 launchUrl(b['url']);
                 break;
             }
-
-            //Scrolldown the list to show the latest message
-            scrollController.animateTo(
-              scrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 600),
-              curve: Curves.ease,
-            );
           },
         ),
       );
@@ -739,24 +717,14 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                 case 'postback':
                                   socketService.sendMessage(b['payload']);
 
-                                  setState(() {
-                                    messages.add({
-                                      'message': (new ChatMessage(
-                                          'text', b['title'], null)),
-                                      'sender': 'user'
-                                    });
-                                  });
+                                  addMessageToChat(
+                                      new ChatMessage('text', b['title'], null),
+                                      'user');
+
                                   break;
                                 case 'web_url':
                                   launchUrl(b['url']);
                               }
-
-                              //Scrolldown the list to show the latest message
-                              scrollController.animateTo(
-                                scrollController.position.maxScrollExtent,
-                                duration: Duration(milliseconds: 600),
-                                curve: Curves.ease,
-                              );
                             },
                           )
                   ],
