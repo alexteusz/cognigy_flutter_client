@@ -48,16 +48,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     // check if the application is in foreground or not
     WidgetsBinding.instance.addObserver(this);
 
-    // add text field listener to handle the cursor position
-    textController.addListener(() {
-      String text = textController.text;
-      textController.value = textController.value.copyWith(
-          text: text,
-          selection:
-              TextSelection(baseOffset: text.length, extentOffset: text.length),
-          composing: TextRange.empty);
-    });
-
     super.initState();
   }
 
@@ -147,6 +137,14 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             setState(() {
               textController.text = value;
             });
+
+            // set the cursor position
+            String text = textController.text;
+            textController.value = textController.value.copyWith(
+                text: text,
+                selection: TextSelection(
+                    baseOffset: text.length, extentOffset: text.length),
+                composing: TextRange.empty);
           },
           onEditingComplete: () {
             //Check if the textfield has text or not
