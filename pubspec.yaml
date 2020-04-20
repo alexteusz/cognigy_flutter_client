@@ -34,6 +34,9 @@ dependencies:
 
   flutter_local_notifications: ^1.4.1
 
+  # voice input
+  speech_to_text: ^2.1.0
+
   # render html content
   flutter_html: ^0.11.1
 
