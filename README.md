@@ -21,3 +21,4 @@ In order to send notifications which should be displayed to the user, use the [C
 - [x] Store socket url and url token into file to make is persitent over time
 - [x] Add list message support
 - [ ] Add various styles which the can choose in the settings
+- [ ] Add voice input permissions on Android devices: https://pub.dev/packages/speech_to_text
