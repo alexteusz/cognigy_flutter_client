@@ -41,5 +41,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Use your voice to send a message to the AI</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow Cognigy to use your microphone in order to use voice to send a message to the AI</string>
 </dict>
 </plist>
