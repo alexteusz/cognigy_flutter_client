@@ -9,6 +9,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 
+// voice input
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
@@ -26,10 +31,12 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   ChatMessage cognigyMessage;
   bool isConnected;
   AppLifecycleState appLifecycleState;
+  bool isRecordingVoice;
+  bool _hasSpeech;
 
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-
   final SocketService socketService = injector.get<SocketService>();
+  final SpeechToText speech = SpeechToText();
 
   @override
   void initState() {
@@ -40,6 +47,8 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     textController = TextEditingController();
     scrollController = ScrollController();
     isConnected = false;
+    isRecordingVoice = false;
+    _hasSpeech = false;
     focusNode = FocusNode();
 
     handleCognigyConnection();
@@ -49,6 +58,9 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
 
     // check if the application is in foreground or not
     WidgetsBinding.instance.addObserver(this);
+
+    // initialize speech service
+    initSpeechState();
 
     super.initState();
   }
@@ -64,6 +76,20 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     setState(() {
       appLifecycleState = state;
+    });
+  }
+
+  Future<void> initSpeechState() async {
+    bool hasSpeech =
+        await speech.initialize(onError: (SpeechRecognitionError error) {
+      print('[VoiceInput] error: $error');
+    }, onStatus: (String status) {
+      print('[VoiceInput] status: $status');
+    });
+
+    if (!mounted) return;
+    setState(() {
+      _hasSpeech = hasSpeech;
     });
   }
 
@@ -129,7 +155,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       width: width * 0.7,
       constraints: BoxConstraints(minWidth: width * 0.7),
       //padding: const EdgeInsets.all(2.0),
-      margin: const EdgeInsets.only(left: 40.0),
       decoration: BoxDecoration(
           color: Theme.of(context).accentColor,
           //border: Border.all(color: Colors.black12, width: 1.5),
@@ -209,12 +234,42 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     );
   }
 
+  Widget buildVoiceInputButton() {
+    return FloatingActionButton(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      focusElevation: 0,
+      hoverElevation: 0,
+      highlightElevation: 0,
+      onPressed: () {
+        setState(() {
+          isRecordingVoice = isRecordingVoice != true;
+        });
+
+        // start recording the user's voice
+        if (isRecordingVoice) {
+          speech.listen(onResult: (SpeechRecognitionResult result) {
+            textController.text = result.recognizedWords;
+          });
+        } else if (!isRecordingVoice) {
+          speech.stop();
+        }
+      },
+      child: Icon(
+        isRecordingVoice ? Icons.mic_off : Icons.mic,
+        size: 30,
+        color: isRecordingVoice ? Colors.black : Colors.black12,
+      ),
+    );
+  }
+
   Widget buildInputArea() {
     return Container(
       width: width,
       color: Colors.transparent,
       child: Row(
         children: <Widget>[
+          buildVoiceInputButton(),
           buildChatInput(),
           buildSendButton(),
         ],
