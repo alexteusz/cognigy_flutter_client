@@ -151,56 +151,56 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   }
 
   Widget buildChatInput() {
-    return Container(
-      width: width * 0.7,
-      constraints: BoxConstraints(minWidth: width * 0.7),
-      //padding: const EdgeInsets.all(2.0),
-      decoration: BoxDecoration(
-          color: Theme.of(context).accentColor,
-          //border: Border.all(color: Colors.black12, width: 1.5),
-          borderRadius: BorderRadius.circular(30.0)),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 15.0),
-        child: TextField(
-          showCursor: true,
-          cursorRadius: Radius.circular(30),
-          cursorColor: Theme.of(context).primaryColor,
-          focusNode: focusNode,
-          keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.send,
-          autofocus: false,
-          autocorrect: true,
-          enableSuggestions: true,
-          onChanged: (value) {
-            setState(() {
-              textController.text = value;
-            });
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(2.0),
+        decoration: BoxDecoration(
+            color: Theme.of(context).accentColor,
+            //border: Border.all(color: Colors.black12, width: 1.5),
+            borderRadius: BorderRadius.circular(30.0)),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: TextField(
+            showCursor: true,
+            cursorRadius: Radius.circular(30),
+            cursorColor: Theme.of(context).primaryColor,
+            focusNode: focusNode,
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.send,
+            autofocus: false,
+            autocorrect: true,
+            enableSuggestions: true,
+            onChanged: (value) {
+              setState(() {
+                textController.text = value;
+              });
 
-            // set the cursor position
-            String text = textController.text;
-            textController.value = textController.value.copyWith(
-                text: text,
-                selection: TextSelection(
-                    baseOffset: text.length, extentOffset: text.length),
-                composing: TextRange.empty);
-          },
-          onEditingComplete: () {
-            //Check if the textfield has text or not
-            if (textController.text.isNotEmpty) {
-              socketService.sendMessage(textController.text);
+              // set the cursor position
+              String text = textController.text;
+              textController.value = textController.value.copyWith(
+                  text: text,
+                  selection: TextSelection(
+                      baseOffset: text.length, extentOffset: text.length),
+                  composing: TextRange.empty);
+            },
+            onEditingComplete: () {
+              //Check if the textfield has text or not
+              if (textController.text.isNotEmpty) {
+                socketService.sendMessage(textController.text);
 
-              addMessageToChat(
-                  new ChatMessage('text', textController.text, null), 'user');
+                addMessageToChat(
+                    new ChatMessage('text', textController.text, null), 'user');
 
-              textController.text = '';
+                textController.text = '';
 
-              focusNode.unfocus();
-            }
-          },
-          decoration: InputDecoration.collapsed(
-            hintText: 'Send a message...',
+                focusNode.unfocus();
+              }
+            },
+            decoration: InputDecoration.collapsed(
+              hintText: 'Send a message...',
+            ),
+            controller: textController,
           ),
-          controller: textController,
         ),
       ),
     );
@@ -209,7 +209,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   Widget buildSendButton() {
     return FloatingActionButton(
       backgroundColor: Colors.transparent,
-      
       elevation: 0,
       focusElevation: 0,
       hoverElevation: 0,
@@ -266,6 +265,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
 
   Widget buildInputArea() {
     return Container(
+      padding: EdgeInsets.only(left: 15, right: 15),
       width: width,
       color: Colors.transparent,
       child: Row(
