@@ -22,7 +22,8 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => new _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
+class _ChatPageState extends State<ChatPage>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   FocusNode focusNode;
   List messages;
   double height, width;
@@ -268,13 +269,62 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       padding: EdgeInsets.only(left: 15, right: 15),
       width: width,
       color: Colors.transparent,
-      child: Row(
-        children: <Widget>[
-          buildVoiceInputButton(),
-          buildChatInput(),
-          buildSendButton(),
-        ],
-      ),
+      child: AnimatedSwitcher(
+          transitionBuilder: (Widget child, Animation<double> animation) =>
+              ScaleTransition(
+                child: child,
+                scale: animation,
+              ),
+          duration: const Duration(milliseconds: 300),
+          child: isRecordingVoice
+              ? Column(
+                  key: ValueKey<bool>(isRecordingVoice),
+                  children: <Widget>[
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          width: width * 0.5,
+                          padding: const EdgeInsets.all(2.0),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).accentColor,
+                              borderRadius: BorderRadius.circular(30.0)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: TextField(
+                              controller: textController,
+                              decoration: InputDecoration.collapsed(
+                                hintText: "I'm listening...",
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: IconButton(
+                              color: Colors.red,
+                              iconSize: 50,
+                              icon: Icon(Icons.mic),
+                              onPressed: () {
+                                setState(() {
+                                  isRecordingVoice = false;
+                                  speech.stop();
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      )
+                    ])
+              : Row(key: ValueKey<bool>(isRecordingVoice), children: <Widget>[
+                  buildVoiceInputButton(),
+                  buildChatInput(),
+                  buildSendButton(),
+                ])),
     );
   }
 
