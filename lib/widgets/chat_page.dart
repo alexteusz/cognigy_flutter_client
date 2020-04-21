@@ -209,13 +209,14 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   Widget buildSendButton() {
     return FloatingActionButton(
       backgroundColor: Colors.transparent,
+      
       elevation: 0,
       focusElevation: 0,
       hoverElevation: 0,
       highlightElevation: 0,
       onPressed: () {
         //Check if the textfield has text or not
-        if (textController.text.isNotEmpty) {
+        if (textController.text.isNotEmpty && !isRecordingVoice) {
           socketService.sendMessage(textController.text);
 
           addMessageToChat(
