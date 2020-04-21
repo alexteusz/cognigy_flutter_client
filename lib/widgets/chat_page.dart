@@ -280,6 +280,9 @@ class _ChatPageState extends State<ChatPage>
               ? Column(
                   key: ValueKey<bool>(isRecordingVoice),
                   children: <Widget>[
+                    SizedBox(
+                      height: 20
+                    ),
                       Align(
                         alignment: Alignment.centerRight,
                         child: Container(
