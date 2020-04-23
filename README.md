@@ -22,3 +22,6 @@ In order to send notifications which should be displayed to the user, use the [C
 - [x] Add list message support
 - [ ] Add various styles which the can choose in the settings
 - [ ] Add voice input permissions on Android devices: https://pub.dev/packages/speech_to_text
+- [ ] Add the feature to add multiple socket endpoint connections to a list so that the user can select a demo from this list and directly show it
+- [ ] Add the Cognigy logo to the settings dialog window and hide it in the main chat window
+- [ ] When a user adds a new socket connection to the list of connections, provide a chatbot name field which will rendered to the top of the chat page where the cognigy logo is located now
